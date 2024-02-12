@@ -3,7 +3,8 @@ from flask_login import login_user, logout_user, current_user
 
 from forms import SignUpForm, LoginForm
 from models import User, check_password_hash
-from . import db
+from models import db
+from .. import login_manager
 
 auth = Blueprint('authorization', __name__,
                  template_folder='auth_templates',
@@ -31,7 +32,7 @@ def signup():
     except:
         raise Exception('Something went wrong')
     
-    return render_template('register.html', __name__,
+    return render_template('sign_up.html',
                            title = 'Sign Up',
                            form = form)
 
@@ -57,12 +58,22 @@ def signin():
     except:
         raise Exception('Form is not valid')
     
-    return render_template('/signin.html', __name__,
+    return render_template('/sign_in.html',
                            title='Sign In',
                            form=form)
 
 @auth.route('/logout')
 def logout():
     logout_user()
-    return render_template('/index.html',
-                           title='Coffee Lovers Unite')
+    return redirect(url_for('site.home'))
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id is not None:
+        return User.query.get(user_id)
+    return None
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('You must be logged in to view that page.')
+    return redirect(url_for('authorization.signin'))

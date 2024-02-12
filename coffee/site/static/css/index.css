@@ -1,0 +1,9 @@
+body {
+    background-image: url('../img/mitchell-luo-li7LkjxlB40-unsplash.jpg');
+    background-attachment: fixed;
+    background-size: 100vw;
+}
+
+.grid-container{
+    margin-top: 50px;
+}

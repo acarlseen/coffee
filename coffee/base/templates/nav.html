@@ -1,0 +1,25 @@
+{% block nav%}
+<nav class="navbar">
+        <h1><a href="{{ url_for('site.home') }}" class="nav-item">Home</a></h1>
+    <ul class="navlist-container">
+        {% if not current_user.is_authenticated %}
+            <li class="navlist">
+                <a href="{{ url_for('authorization.signup') }}" class="nav-item">Sign Up</a>
+            </li>
+            <li class="navlist">
+                <a href="{{ url_for('authorization.signin') }}" class="nav-item">Sign In</a>
+            </li>
+        {% else %}
+            <li class="navlist">
+                <a href="#" class="nav-item">Profile</a>
+            </li>
+            <li class="navlist">
+                <a href="#" class="nav-item">Collection</a>
+            </li>
+            <li class="navlist">
+                <a href="{{ url_for('authorization.logout') }}" class="nav-item">Logout</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endblock %}

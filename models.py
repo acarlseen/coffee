@@ -1,10 +1,10 @@
 from datetime import datetime
 from flask_login import UserMixin
 from flask_marshmallow import Marshmallow
-from sqlalchemy import ForeignKey # might need to move String, etc up here
-from sqlalchemy.orm import Mapped, mapped_column, String, Integer, Boolean
+from sqlalchemy import ForeignKey, String, Integer, Boolean
+from sqlalchemy.orm import Mapped, mapped_column
 import secrets
-from werkzeug import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 
 from coffee import db
@@ -69,20 +69,58 @@ class Coffee(db.Model):
     variety : Mapped[str] = mapped_column('variety', String, nullable=True)
     process : Mapped[str] = mapped_column('process', String, nullable=True)
     blend : Mapped[bool] = mapped_column('blend', Boolean, nullable=False, default=False)
-    tasting_notes : Mapped[str] = mapped_column('tasting_notes', String, nullable=True)
 
     def __init__(self, roaster, bag_name='', origin='', producer='', variety='', process='', blend=''):
         self.id = self.set_id()
 
     def set_id(self):
         return uuid.uuid4()
+    
+    def exists(self, new_coffee: dict) -> bool:
+        my_attributes = {"roaster" : self.roaster,
+                         "bag_name" : self.bag_name,
+                         "origin" : self.origin,
+                         "producer" : self.producer,
+                         "variety" : self.variety,
+                         "process" : self.process,
+                         "blend" : self.blend}
+        
+        same_data = True
+        for key,value in my_attributes.items():
+            if new_coffee[key].lower() == value.lower() or new_coffee[key] == None or value == None:
+                continue
+            else:
+                same_data = False
+                break
+        return same_data
+        
 
 class CoffeeSchema(ma.Schema):
     class Meta:
-        fields = ('roaster', 'bag_name', 'origin', 'producer', 'variety', 'process', 'blend', 'tasting_notes')
+        fields = ('roaster', 'bag_name', 'origin', 'producer', 'variety', 'process', 'blend')
 
+coffee_schema = CoffeeSchema()
+coffees_schema = CoffeeSchema(many=True)
 
 class Portfolio(db.Model):
+    id : Mapped[str] = mapped_column('id', String, primary_key=True)
     user : Mapped[str] = mapped_column('user', String, ForeignKey(User.id))
     coffee : Mapped[str] = mapped_column('coffee', String, ForeignKey(Coffee.id))
+    tasting_notes : Mapped[str] = mapped_column('tasting_notes', String, nullable=True)
     timestamp : Mapped[str] = mapped_column('added_on', String, default= datetime.now())
+
+    def init(self, user, coffee, tasting_notes=''):
+        self.user = user
+        self.coffee = coffee
+        self.tasting_notes = tasting_notes
+        self.id = self.set_id()
+
+    def set_id(self):
+        return uuid.uuid4()
+
+class PortfolioSchema(ma.Schema):
+    class Meta:
+        fields = ('tasting_notes', 'timestamp')
+
+portfolio_schema = PortfolioSchema()
+portfolios_schema = PortfolioSchema(many=True)

@@ -1,0 +1,66 @@
+{% extends 'base.html' %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('authorization.static', filename='css/style.css')}}"
+/>
+
+{% block title %}{{ title }}{% endblock %}
+
+{% endblock %} {% block content %}
+<div class="grid-container" style="background-image: url({{ url_for('authorization.static', filename='img/steven-erixon-LOvpejk4nZs-unsplash.jpg') }} );">
+  <div class="signin-object">
+    <div class="card-title">
+      <h1>Sign Up</h1>
+    </div>
+    <div class="form-container">
+      <form action="{{ url_for('authorization.signup') }}" method="POST">
+        {{ form.hidden_tag() }}
+        <fieldset class="email-field">
+          {{ form.email.label }} <br>
+          {{ form.email(class_="input-field") }} 
+          {% if form.email.errors %}
+          <ul class="errors">
+            {% for error in form.email.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </fieldset>
+
+        <fieldset class="password-field">
+          {{ form.password.label }} <br>
+          {{ form.password(class_="input-field") }} 
+          {% if form.password.errors %}
+          <ul class="errors">
+            {% for error in form.password.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </fieldset>
+
+        <fieldset class="confirm-password-field">
+          {{ form.confirm.label }} <br>
+          {{ form.confirm(class_="input-field") }}
+          {% if form.confirm.errors %}
+          <ul class="errors">
+            {% for error in form.confirm.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </fieldset>
+
+        <div class="submit-button">{{ form.submit_button }}</div>
+      </form>
+    </div>
+      <div class="login-prompt">
+        <span class="login-prompt">Already have an account?</span>
+        <a href="{{ url_for('authorization.signin') }}" class="login-link login-prompt"
+          >Log In.
+        </a>
+      </div>
+    
+  </div>
+</div>
+{% endblock %}
