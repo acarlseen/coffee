@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('coffee.static', filename='css/add_coffee.css') }}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content%}
+<div class="form-container">
+    <form action="{{ url_for('coffee.add_coffee') }}" method="POST">
+      {{ form.hidden_tag() }}
+      <fieldset class="form-field">
+        {{ form.roaster.label }} <span class="required">*required</span><br>
+        {{ form.roaster }} 
+        {% if form.roaster.errors %}
+        <ul class="error">
+          {% for error in form.roaster.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.bag_name.label }} <br>
+        {{ form.bag_name }} 
+        {% if form.bag_name.errors %}
+        <ul class="error">
+          {% for error in form.bag_name.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.origin.label }} <span class="required">*required</span><br>
+        {{ form.origin }}
+        {% if form.origin.errors %}
+        <ul class="error">
+            {% for error in form.origin.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.producer.label }} <br>
+        {{ form.producer }}
+        {% if form.producer.errors %}
+        <ul class="error">
+            {% for error in form.producer.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.variety.label }} <br>
+        {{ form.variety }}
+        {% if form.variety.errors %}
+        <ul class="error">
+            {% for error in form.variety.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.process_method.label }} <br>
+        {{ form.process_method }}
+        {% if form.process_method.errors %}
+        <ul class="error">
+          {% for error in form.process_method.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.blend.label }}
+        {{ form.blend }}
+        {% if form.blend.errors %}
+        <ul class="error">
+            {% for error in form.blend.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field">
+        {{ form.tasting_notes.label }} <br>
+        {{ form.tasting_notes }}
+        {% if form.tasting_notes.errors %}
+        <ul class="error">
+            {% for error in form.tasting_notes.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <div class="submit-button">{{ form.submit_button }}</div>
+    </form>
+{% endblock %}

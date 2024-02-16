@@ -11,10 +11,13 @@
             </li>
         {% else %}
             <li class="navlist">
-                <a href="#" class="nav-item">Profile</a>
+                <a href="{{ url_for('coffee.add_coffee') }}" class="nav-item">+Coffee</a>
             </li>
             <li class="navlist">
-                <a href="#" class="nav-item">Collection</a>
+                <a href="{{ url_for('profile.user_profile', user_id=current_user.get_id()) }}" class="nav-item">Profile</a>
+            </li>
+            <li class="navlist">
+                <a href="{{ url_for('profile.portfolio', user_id=current_user.get_id()) }}" class="nav-item">Portfolio</a>
             </li>
             <li class="navlist">
                 <a href="{{ url_for('authorization.logout') }}" class="nav-item">Logout</a>

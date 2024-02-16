@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, EmailField, SubmitField, BooleanField, RadioField
 from wtforms.validators import Email, Length, Optional, DataRequired, EqualTo
 
 
@@ -19,11 +19,11 @@ class LoginForm(FlaskForm):
 
 class CoffeeForm(FlaskForm):
     roaster = StringField('Roaster', validators=[Length(max=50, message='50 character max'), DataRequired()])
-    bag_name = StringField('Name on bag', validators=[Length(max=50, message='50 character max')])
+    bag_name = StringField('Name on bag', validators=[Length(max=50, message='50 character max'), DataRequired()])
     origin = StringField('Origin', validators=[Length(max=50), Optional()])
     producer = StringField('Producer/Farm', validators=[Length(max=50), Optional()])
     variety = StringField('Variety', validators=[Length(max=50), Optional()])
-    process = StringField('Process', description='Natural/Washed/Carbonic/etc?', validators=[Length(max=50), Optional()])
-    blend = BooleanField('Blend', description='Is this a blend?')
-    tasting_notes = StringField('Tasting Notes', description="Haven't tasted yet? Leave it for later", validators=[Length(min=3, max=200), Optional()])
+    process_method = StringField('Process Method', validators=[Length(max=50), Optional()])
+    blend = RadioField('Is this a blend?', choices=[('blend', 'Blend'),('single origin', 'Single Origin')])
+    tasting_notes = StringField('Tasting Notes', validators=[Length(min=3, max=200), Optional()])
     submit_button = SubmitField('Add beans')

@@ -8,6 +8,31 @@
 
 {% block content %}
 <div class="grid-container">
-    <h1>Sample text</h1>
+    <div class="landing-image">
+        <img src="{{ url_for('site.static', filename='img/brewtych_text2.png') }}" alt="" class="splash-text">
+        <img src="{{ url_for('site.static', filename='img/brewtych.png') }}" alt="" class="splash">
+    </div>
+    <div class="join-button">
+        <a href="{{ url_for('authorization.signup') }}">
+            <button class="sign-up"><span class="button-text">Join Us</span></button>
+        </a>
+    </div>
+    <div class="join-container">
+        <div class="key-block odd-block">
+            <div class="keywords">Find</div>
+            <div class="key-text">new coffees from origins and roasters around the world.</div>
+        </div>
+        <div class="key-block even-block">
+            <div class="keywords">Taste</div>
+            <div class="key-text">what each cup has to offer.</div>
+        </div>
+        <div class="key-block odd-block">
+            <div class="keywords">Journal</div>
+            <div class="key-text">your experience and add your voice to the community.</div>
+        </div>
+        
+        <!--<a href="{{ url_for('authorization.signup') }}" class="signup-link">Join to find new flavors</a> -->
+    </div>
+
 </div>
 {% endblock %}

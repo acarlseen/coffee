@@ -14,7 +14,7 @@ auth = Blueprint('authorization', __name__,
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('site.profile'))
+        return redirect(url_for('profile.user_profile'))
     
     form = SignUpForm()
     try:
@@ -28,7 +28,7 @@ def signup():
             db.session.commit()
 
             flash(f'Profile for {email} created!')
-            return redirect(url_for('site.profile'))
+            return redirect(url_for('profile.user_profile', user_id=new_user.id))
     except:
         raise Exception('Something went wrong')
     
@@ -39,7 +39,7 @@ def signup():
 @auth.route('/signin', methods=['GET', 'POST'])
 def signin():
     if current_user.is_authenticated:
-        return redirect(url_for('site.profile'))
+        return redirect(url_for('profile.user_profile', user_id=current_user.get_id()))
     
     form = LoginForm()
     try:
@@ -50,12 +50,13 @@ def signin():
             existing_user = User.query.filter_by(email=email).first()
             if check_password_hash(existing_user.password, password):
                 login_user(existing_user)
-                redirect(url_for('site.profile'))
+                return redirect(url_for('profile.user_profile', user_id=existing_user.id))
             else:
                 if existing_user is None:
                     flash('Email is not registered with us')
                 flash('Email and password do not match')
     except:
+        print(form.errors)
         raise Exception('Form is not valid')
     
     return render_template('/sign_in.html',

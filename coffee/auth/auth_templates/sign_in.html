@@ -3,14 +3,16 @@
 {% block style %}
 <link
   rel="stylesheet"
-  href="{{ url_for('authorization.static', filename='css/style.css')}}"
+  href="{{ url_for('authorization.static', filename='css/signin.css')}}"
 />
 {% endblock %} 
 
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
-<div class="grid-container" style="background-image: url( {{ url_for('authorization.static', filename='img/vitali-adutskevich-BwL_FhYzQMU-unsplash.jpg')}})">
+<div class="grid-container">
+  <img src="{{ url_for('authorization.static', filename='img/tabitha-turner-CdZcOCBUP98-unsplash.jpg')}}" alt="latte art" class="signin-bg">
+  <div class="signin-alpha"></div>
   <div class="signin-object">
     <div class="card-title">
       <h1>Sign In</h1>
@@ -18,7 +20,7 @@
     <div class="form-container">
       <form action="{{ url_for('authorization.signin') }}" method="POST">
         {{ form.hidden_tag() }}
-        <fieldset class="email-field">
+        <fieldset class="email-field form-field">
           {{ form.email.label }} <br>
           {{ form.email(class_="input-field") }} 
           {% if form.email.errors %}
@@ -30,7 +32,7 @@
           {% endif %}
         </fieldset>
 
-        <fieldset class="password-field">
+        <fieldset class="password-field form-field">
           {{ form.password.label }} <br>
           {{ form.password(class_="input-field") }} 
           {% if form.password.errors %}

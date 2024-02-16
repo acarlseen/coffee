@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('profile.static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block title%}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="grid-container">
+    <p>User Id: {{user_id}}</p>
+    <p>Token: {{token}}</p>
+</div>
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import Blueprint, json, jsonify, request
 
 from models import db, Portfolio, User, Coffee, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema 
 from helpers import token_required
+from ..coffees.coffee_routes import get_coffee_id, update_coffee_table
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -120,48 +121,3 @@ def delete_coffee(current_user_token, user_id, coffee_id):
 
 
 
-#helper functions
-def get_coffee_id(coffee_attributes: dict) -> str:
-    new_coffee = True
-
-    coffee_list = Coffee.query.filter_by(roaster=coffee_attributes['roaster'], 
-                                         origin=coffee_attributes['origin']).all()
-    for coffee_obj in coffee_list:
-        if coffee_obj.exists(coffee_attributes):
-            new_coffee= False
-            coffee = coffee_obj
-            update_coffee_table(coffee, coffee_attributes)
-            break
-    
-    if new_coffee:
-        coffee = Coffee(coffee_attributes['roaster'],
-                               coffee_attributes['bag_name'],
-                               coffee_attributes['origin'],
-                               coffee_attributes['producer'],
-                               coffee_attributes['variety'],
-                               coffee_attributes['process'],
-                               coffee_attributes['blend'])
-        db.session.add(coffee)
-    
-    return coffee.id
-
-def update_coffee_table(existing_coffee: Coffee, update_attributes: dict):
-    updated_coffee = { 'roaster' : existing_coffee.roaster,
-                      'bag_name' : existing_coffee.bag_name,
-                      'origin' : existing_coffee.origin,
-                      'producer' : existing_coffee.producer,
-                      'variety' : existing_coffee.variety,
-                      'process' : existing_coffee.process,
-                      'blend' : existing_coffee.blend}
-    
-    for k,v in updated_coffee.items():
-        if v == None:
-            updated_coffee[k] = update_attributes[k]
-    
-    existing_coffee.roaster = updated_coffee['roaster']
-    existing_coffee.bag_name = updated_coffee['bag_name']
-    existing_coffee.origin = updated_coffee['origin']
-    existing_coffee.producer = updated_coffee['producer']
-    existing_coffee.variety = updated_coffee['variety']
-    existing_coffee.process = updated_coffee['process']
-    existing_coffee.blend = updated_coffee['blend']

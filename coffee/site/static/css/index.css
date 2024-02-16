@@ -1,9 +1,135 @@
+/*{
+    border: 2px solid red;
+}*/
+
+
 body {
-    background-image: url('../img/mitchell-luo-li7LkjxlB40-unsplash.jpg');
+    background-image: url('../img/hexagon-pink-marble-tiles-patterned-background.jpg');
     background-attachment: fixed;
     background-size: 100vw;
+    background-repeat: repeat-y;
 }
 
 .grid-container{
+    display: grid;
     margin-top: 50px;
+    grid-template-rows: auto;
+    grid-template-areas:
+    "landing"
+    "button"
+    "join";
+}
+.landing-image{
+    display: grid;
+    grid-area: landing;
+    grid-template-areas: 
+    "text"
+    "image" ;
+    grid-template-rows: 30vh 30vh;
+    margin-top: 10px;
+    height: 52vh;
+    @media screen and (min-width:930px) {
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: "text image";
+    height: 30vh;
+    margin: 20px;
+    padding: 10px;
+    }
+    
+    background-color: rgba(218, 116, 174, 0.593);
+
+    position: relative;
+    border-radius: 5px;
+
+}
+
+.splash-text{
+    grid-area: text;
+    justify-self: center;
+    @media screen and (min-width:900px){
+        grid-area: text;
+    justify-self: end;
+    }
+    height: 30vh;
+}
+.splash{
+    grid-area: image;
+    justify-self: center;
+    position: absolute;
+    height: 20vh;
+    border-radius: 5px;
+    max-width: 95%;
+    object-fit: contain;
+    @media screen and (min-width:900px){
+        grid-area: image;
+        justify-self: end;
+        height: 100%;
+    }
+}
+
+.join-button{
+    grid-area: button;
+    justify-self: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 50px;
+    width: 95vw;
+    .sign-up{
+        background-color: rgba(255, 255, 255, 0.792);
+        border-radius: 30px;
+        width: 100%;
+        height: 100%;
+        border: 3px solid rgba(218, 116, 174, 0.593);
+    }
+}
+
+.button-text{
+    font-size: 30px;
+    color: rgba(218, 116, 174, 0.593);
+}
+
+.join-container{
+    grid-area: join;
+   
+
+    gap: 10px;
+
+    background-color: rgba(218, 116, 174, 0.593);
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+}
+
+.key-block{
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 60px;
+    grid-template-areas: 
+    "keyword key-text";
+    gap: 10px;
+
+}
+.even-block{
+    background-color: rgba(255, 255, 255, 0.838);
+    width: 100%;
+    margin-left: -10px;
+    padding-left: 10px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: rgba(218, 116, 174, 0.593);
+}
+.keywords{
+    grid-area: keyword;
+    font-size: 40px;
+    font-weight: bold;
+    justify-self: end;
+    align-self: self-end;
+}
+
+.key-text{
+    margin-top: 20px;
+    grid-area: key-text;
+    align-self: flex-end;
+    text-align: justify;
+    padding-bottom: 5px;
 }

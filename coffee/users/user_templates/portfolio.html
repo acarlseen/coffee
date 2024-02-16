@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('profile.static', filename='css/portfolio.css') }}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="grid-container">
+    {% if coffees %}
+        <ul class="coffee-list">
+            {% for coffee in coffees %}
+            <li class="coffee-item">{{ coffee.coffee }}</li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <div class="first-coffee">
+            Adding tasting notes is easy!<br>
+            <a href="{{ url_for('coffee.add_coffee') }}" class="add-link">Add your first coffee, it's easy!</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

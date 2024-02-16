@@ -16,7 +16,7 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
-    migrate.init_app(app)
+    migrate.init_app(app, db)
 
     login_manager.login_view = 'auth.sign_in'
 
@@ -24,10 +24,14 @@ def create_app():
         # Import blueprints
         from .site.routes import site
         from .auth.auth import auth
+        from .users.user_routes import profile
+        from .coffees.coffee_routes import coffee
 
         # Register blueprints
         app.register_blueprint(site)
         app.register_blueprint(auth)
+        app.register_blueprint(profile)
+        app.register_blueprint(coffee)
     
         # create database models
         db.create_all()

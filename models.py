@@ -67,27 +67,34 @@ class Coffee(db.Model):
     origin : Mapped[str] = mapped_column('origin', String, nullable=False, default='')
     producer : Mapped[str] = mapped_column('producer', String, nullable=True)
     variety : Mapped[str] = mapped_column('variety', String, nullable=True)
-    process : Mapped[str] = mapped_column('process', String, nullable=True)
+    process_method : Mapped[str] = mapped_column('process_method', String, nullable=True)
     blend : Mapped[bool] = mapped_column('blend', Boolean, nullable=False, default=False)
 
-    def __init__(self, roaster, bag_name='', origin='', producer='', variety='', process='', blend=''):
+    def __init__(self, roaster, bag_name='', origin='', producer='', variety='', process_method='', blend=''):
         self.id = self.set_id()
+        self.roaster = roaster
+        self.bag_name = bag_name
+        self.origin = origin
+        self.producer = producer
+        self.variety = variety
+        self. process_method = process_method
+        self.blend = blend
 
     def set_id(self):
         return uuid.uuid4()
     
-    def exists(self, new_coffee: dict) -> bool:
+    def matches(self, new_coffee_attributes: dict) -> bool:
         my_attributes = {"roaster" : self.roaster,
                          "bag_name" : self.bag_name,
                          "origin" : self.origin,
                          "producer" : self.producer,
                          "variety" : self.variety,
-                         "process" : self.process,
+                         "process_method" : self.process_method,
                          "blend" : self.blend}
         
         same_data = True
         for key,value in my_attributes.items():
-            if new_coffee[key].lower() == value.lower() or new_coffee[key] == None or value == None:
+            if value.lower() == new_coffee_attributes[key].lower() or new_coffee_attributes[key] == None or value == None:
                 continue
             else:
                 same_data = False
@@ -109,7 +116,7 @@ class Portfolio(db.Model):
     tasting_notes : Mapped[str] = mapped_column('tasting_notes', String, nullable=True)
     timestamp : Mapped[str] = mapped_column('added_on', String, default= datetime.now())
 
-    def init(self, user, coffee, tasting_notes=''):
+    def __init__(self, user, coffee, tasting_notes=''):
         self.user = user
         self.coffee = coffee
         self.tasting_notes = tasting_notes

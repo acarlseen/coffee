@@ -1,0 +1,96 @@
+*{
+    border: 2px solid red;
+}
+
+/* revisit this css. The sign in card objects resize awkwardly
+at different rates. Might need to wrap the whole thing in one
+more div*/
+
+body{
+    background-image: url('../img/hexagon-pink-marble-tiles-patterned-background.jpg');
+    background-attachment: fixed;
+    background-size: 100vw;
+    background-repeat: repeat-y;
+}
+
+.grid-container{
+    margin-top: 20vh;
+    display:grid;
+    grid-template-areas: signin-object;
+    justify-content: center;
+}
+
+.signin-bg{
+    grid-area: signin-object;
+    height: 60vh;
+    z-index: -2;
+    border-radius: 10px;
+}
+
+.signin-alpha{
+    grid-area: signin-object;
+    height: 60vh;
+    width: 100%;
+    z-index: -1;
+    background-color: rgba(255, 255, 255, 0.503);
+    border-radius: 10px;
+}
+
+.signin-object{
+    display:grid;
+    grid-area: signin-object;
+    grid-template-areas: 
+    "title"
+    "signin"
+    "signup-link";
+    justify-items: center;
+    height: 60vh;
+    width: 30vw;
+    border-radius: 10px;
+}
+    
+
+.card-title{
+    grid-area: title;
+}
+
+.form-container{
+    display: grid;
+    grid-area: signin;
+    justify-items: center;
+
+    background-color: rgba(255, 255, 255, 0.6);
+    padding-top:  20px;
+    height: 20vh;
+    width: 60%;
+    border-radius: 5px;
+
+    .form-field{
+        border: none;
+    }
+}
+
+.input-field{
+    border: none;
+    border-radius: 3px;
+}
+
+.submit-button{
+    display: grid;
+    justify-items: center;
+}
+
+#submit_button{
+    width: 90%;
+    background-color: rgba(218, 116, 174);
+    border: none;
+    border-radius: 3px;
+    height: 25px;
+    color: white;
+    margin-top: 1em;
+    justify-items: center;
+}
+
+.login-prompt{
+    grid-area: signup-link;
+}

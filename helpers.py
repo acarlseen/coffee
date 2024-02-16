@@ -1,10 +1,10 @@
-from models import User
 import secrets
 import json
 from functools import wraps
 import decimal
-from flask import jsonify, json, request
+from flask import jsonify, request
 
+from models import User
 
 def token_required(flask_function):
     @wraps(flask_function)
