@@ -68,7 +68,7 @@ class Coffee(db.Model):
     producer : Mapped[str] = mapped_column('producer', String, nullable=True)
     variety : Mapped[str] = mapped_column('variety', String, nullable=True)
     process_method : Mapped[str] = mapped_column('process_method', String, nullable=True)
-    blend : Mapped[bool] = mapped_column('blend', Boolean, nullable=False, default=False)
+    blend : Mapped[str] = mapped_column('blend', String, nullable=False, default=False)
 
     def __init__(self, roaster, bag_name='', origin='', producer='', variety='', process_method='', blend=''):
         self.id = self.set_id()
@@ -109,18 +109,47 @@ class CoffeeSchema(ma.Schema):
 coffee_schema = CoffeeSchema()
 coffees_schema = CoffeeSchema(many=True)
 
+class Flavor(db.Model):
+    id : Mapped[int] = mapped_column('id', Integer, primary_key=True, autoincrement=True)
+    adjective : Mapped[int] = mapped_column('adjective', String, nullable=False)
+
+    def __init__(self, adjective):
+        self.adjective = adjective
+        self.id
+
+
+class FlavorProfile(db.Model):
+    id: Mapped[int] = mapped_column('id', Integer, primary_key=True, autoincrement=True)
+    adjective_id : Mapped[int] = mapped_column('adjective_id', Integer, ForeignKey(Flavor.id), nullable=False)
+    coffee_id : Mapped[str] = mapped_column('coffee_id', String, ForeignKey(Coffee.id), nullable=False)
+    acidity : Mapped[str] = mapped_column('acidity', String)
+
+    def __init__(self, coffee_id, adjective_id, acidity):
+        self.adjective_id = adjective_id
+        self.coffee_id = coffee_id
+        self.acidity = acidity
+
 class Portfolio(db.Model):
     id : Mapped[str] = mapped_column('id', String, primary_key=True)
     user : Mapped[str] = mapped_column('user', String, ForeignKey(User.id))
     coffee : Mapped[str] = mapped_column('coffee', String, ForeignKey(Coffee.id))
     tasting_notes : Mapped[str] = mapped_column('tasting_notes', String, nullable=True)
+    flavors: Mapped[str] = mapped_column('flavors', String, nullable=True)
+    rating : Mapped[str] = mapped_column('rating', String, nullable=True)
     timestamp : Mapped[str] = mapped_column('added_on', String, default= datetime.now())
 
-    def __init__(self, user, coffee, tasting_notes=''):
+
+    def __init__(self, user, coffee, tasting_notes='', flavors='', rating=''):
         self.user = user
         self.coffee = coffee
         self.tasting_notes = tasting_notes
+        self.flavors = flavors
+        self.rating = rating
         self.id = self.set_id()
+
+    def get_flavors(self):
+        ''' revisit this, just want to return flavor_id data'''
+        return FlavorProfile.query.select(FlavorProfile.adjective_id).filter_by(user_id=self.user, coffee_id=self.coffee).all()
 
     def set_id(self):
         return uuid.uuid4()

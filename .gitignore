@@ -1,3 +1,6 @@
 venv
 .env
 scratch.py
+__pychache__
+
+to-do.txt

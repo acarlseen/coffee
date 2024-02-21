@@ -3,12 +3,12 @@
 }*/
 
 
-body {
+/*body {
     background-image: url('../img/hexagon-pink-marble-tiles-patterned-background.jpg');
     background-attachment: fixed;
     background-size: 100vw;
     background-repeat: repeat-y;
-}
+}*/
 
 .grid-container{
     display: grid;
@@ -36,7 +36,8 @@ body {
     padding: 10px;
     }
     
-    background-color: rgba(218, 116, 174, 0.593);
+    background-color: var(--secondary-color);
+    
 
     position: relative;
     border-radius: 5px;
@@ -48,7 +49,7 @@ body {
     justify-self: center;
     @media screen and (min-width:900px){
         grid-area: text;
-    justify-self: end;
+        justify-self: end;
     }
     height: 30vh;
 }
@@ -90,11 +91,10 @@ body {
 
 .join-container{
     grid-area: join;
-   
 
     gap: 10px;
 
-    background-color: rgba(218, 116, 174, 0.593);
+    background-color: var(--secondary-color);
     border-radius: 5px;
     color: white;
     padding: 10px;
@@ -107,19 +107,21 @@ body {
     grid-template-areas: 
     "keyword key-text";
     gap: 10px;
+    color: var(--accent-color1);
 
 }
 .even-block{
-    background-color: rgba(255, 255, 255, 0.838);
+    background-color: var(--accent-color1);
     width: 100%;
     margin-left: -10px;
     padding-left: 10px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    color: rgba(218, 116, 174, 0.593);
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    color: var(--secondary-color);
 }
 .keywords{
     grid-area: keyword;
+    font-family: var(--font-body);
     font-size: 40px;
     font-weight: bold;
     justify-self: end;

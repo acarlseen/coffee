@@ -9,5 +9,7 @@ class Config():
     FLASK_ENV = os.getenv('FLASK_ENV')
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'A different secret string'
     
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or 'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or 'sqlite:///' + os.path.join(base_dir, 'app.db')
     SQLALCHEMY_TRACK_NOTIFICATIONS = False
+
+    ITEMS_PER_PAGE = 9

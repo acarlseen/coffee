@@ -25,11 +25,14 @@ def portfolio(user_id):
         portfolio = Portfolio.query.filter_by(user=user_id).all()
     except:
         print(portfolio)
-    return render_template('portfolio.html',
-                           title='User Portfolio',
-                           coffees=portfolio)
 
-@profile.route('/add_coffee', methods=['GET', 'POST'])
-@login_required
-def add_coffee():
-    form = Co
+    print('portfolio = ', portfolio)
+    coffee_list = [coffee.coffee for coffee in portfolio]
+    print('coffee_list = ', coffee_list)
+    list_o_beans = Coffee.query.filter(Coffee.id.in_(coffee_list))
+    for coffee in list_o_beans:
+        print(coffee.roaster, coffee.bag_name)
+    return render_template('coffee_database.html',
+                           title='User Portfolio',
+                           beans=list_o_beans)
+

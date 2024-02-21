@@ -1,0 +1,93 @@
+*{
+    color: var(--accent-color1);
+}
+
+.grid-container{
+    display: grid;
+    grid-template-columns: repeat(1fr 6);
+    grid-template-rows: auto;
+    grid-template-areas:
+    "nav nav nav nav nav nav nav"
+    "bag bag roaster roaster roaster roaster roaster"
+    "bag bag roaster roaster roaster roaster roaster"
+    "bag bag more more more more more"
+    "bag bag reviews reviews reviews reviews reviews"
+    "data data reviews reviews reviews reviews reviews"
+    "data data reviews reviews reviews reviews reviews"
+    "data data reviews reviews reviews reviews reviews";
+    gap: 20px
+}
+
+.nav-adjuster{
+    grid-area: nav;
+    height: 50px;
+
+}
+
+.coffee-bag-pic{
+    grid-area: bag;
+    border-radius: 10px;
+    background-color: var(--primary-color);
+
+    display: grid;
+    justify-items: center;
+    img{
+        border-radius: 10px;
+        margin: 20px;
+    }
+}
+
+.coffee-info{
+    grid-area: data;
+    border-radius: 10px;
+    background-color: var(--secondary-color);
+
+    padding: 10px;
+    th{
+        text-align: end;
+    }
+}
+
+.roaster-info{
+    grid-area: roaster;
+    border-radius: 10px;
+
+    background-color: var(--primary-color);
+
+    height: 35vh;
+    padding: 10px;
+}
+
+.more-like-this{
+    grid-area: more;
+    border-radius: 10px;
+
+    background-color: var(--secondary-color);
+    padding: 10px;
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: 
+    "head head head"
+    "roaster flavor acidity";
+    h2{
+        grid-area: head;
+    }
+}
+
+.roaster{
+    grid-area: roaster;
+}
+.flavor{
+    grid-area: flavor;
+}
+.acidity{
+    grid-area: acidity;
+}
+.user-reviews{
+    grid-area: reviews;
+    border-radius: 10px;
+
+    background-color: var(--primary-color);
+    padding: 10px;
+}

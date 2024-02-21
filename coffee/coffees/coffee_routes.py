@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import current_user, login_required
+import re
 
-from models import Coffee, Portfolio
+from config import Config
+from models import Coffee, Portfolio, Flavor, FlavorProfile
 from models import db
 from forms import CoffeeForm
 from .. import login_manager
@@ -16,25 +18,56 @@ coffee = Blueprint('coffee', __name__,
 def add_coffee():
 
     form = CoffeeForm()
-    
+    print("form loaded")
     try:
+        print(form.validate_on_submit())
         if request.method == 'POST' and form.validate_on_submit():
+            print("processing")
             attributes = {}
             attributes['roaster'] = form.roaster.data
             attributes['bag_name'] = form.bag_name.data
             attributes['origin'] = form.origin.data
             attributes['producer'] = form.producer.data
-            attributes['variety'] = form.variety.data
-            attributes['process_method'] = form.process_method.data
+            if form.variety.data:
+                attributes['variety'] = str(form.variety.data).lower()
+            if form.process_method.data:
+                attributes['process_method'] = str(form.process_method.data).lower()
             attributes['blend'] = form.blend.data
+            
+            # get coffee_id, and check if coffee is new or exists in db
+            new_coffee_id, coffee_is_new = get_coffee_id(attributes)
+            print("new_coffee_id: ", new_coffee_id)
+            
+            # these go to a separate table
+            acidity = form.acidity.data
+            flavors = str(form.flavors.data).lower()
             tasting_notes = form.tasting_notes.data
-            print(attributes)
-            new_coffee_id = get_coffee_id(attributes)
-            print(new_coffee_id)
+            
+            
+            if flavors == 'none':   #honestly, it works to avoid NoneType errors above.
+                flavors = None      # change back to None
 
-            portfolio_addition = Portfolio(user=current_user.get_id(), coffee=new_coffee_id, tasting_notes=tasting_notes)
-            print("portfolio.id=", portfolio_addition.id)
-            db.session.add(portfolio_addition)
+            print('flavors: ', flavors)
+            create_flavor_profile(flavors, new_coffee_id, acidity)
+            
+            #check if already in portfolio (unless coffee is new to db):
+            # This was causing a query problem with commits vs. rendering speed
+            existing_portfolio = None
+
+            if coffee_is_new == False:
+                existing_portfolio = Portfolio.query.filter_by(user=current_user.get_id(), coffee=new_coffee_id).first()
+            
+            if existing_portfolio == None:
+                portfolio_addition = Portfolio(user=current_user.get_id(), coffee=new_coffee_id, tasting_notes=tasting_notes, flavors=flavors)
+                db.session.add(portfolio_addition)
+
+            else:
+                print('existing_portfolio.user = ', existing_portfolio.user)
+                print('existing_portfolio.coffee: ', existing_portfolio.coffee)
+                existing_portfolio.tasting_notes=tasting_notes
+                existing_portfolio.flavors=flavors
+
+            print(f'coffee_id: {new_coffee_id} \n tasting_notes: {tasting_notes} \n flavors: {flavors})')
             db.session.commit()
 
             return redirect(url_for('profile.portfolio', user_id=current_user.get_id()))
@@ -45,6 +78,72 @@ def add_coffee():
                            title = 'Add a bag',
                            form = form)
 
+@coffee.route('/coffee', methods=['GET'])
+def all_coffees():
+    ''' this page displays all of the coffees in the database'''
+    page = request.args.get('page', 1, type=int)
+    beans = Coffee.query.order_by(Coffee.roaster).paginate( 
+                        page=page, 
+                        per_page = Config.ITEMS_PER_PAGE,
+                        error_out= False)
+    
+    next_url = prev_url = None
+    
+    if beans.has_next:
+        next_url = url_for('coffee.all_coffees', page=beans.next_num)
+    if beans.has_prev:
+        prev_url = url_for('coffee.all_coffees', page=beans.prev_num)
+    
+    return render_template('coffee_database.html',
+                           title='Coffee Database',
+                           beans = beans.items,
+                           next_page=next_url,
+                           prev_page=prev_url)
+
+@coffee.route('/coffee/<coffee_id>', methods=['GET'])
+def coffee_profile(coffee_id):
+    '''
+        Displays a single coffee's page
+    '''
+    coffee = Coffee.query.filter_by(id=coffee_id).first()
+
+    if current_user.is_authenticated:
+        user_id = current_user.get_id()
+        print('user_id: ', user_id)
+        tasting_notes = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
+        if tasting_notes:
+            flavors = tasting_notes.flavors.capitalize()
+            tasting_notes = tasting_notes.tasting_notes
+        print(tasting_notes)
+    return render_template('coffee_profile.html',
+                           title=coffee.roaster +' '+coffee.bag_name,
+                           coffee=coffee,
+                           tasting_notes=tasting_notes,
+                           flavors=flavors,
+                           more_from_roaster=coffee.roaster)
+
+
+@coffee.route('/coffee/roaster/<roaster_name>', methods=['GET'])
+def by_roaster(roaster_name):
+
+    page = request.args.get('page', 1, type=int)
+    beans = Coffee.query.filter_by(roaster=roaster_name).paginate( 
+                        page=page, 
+                        per_page = Config.ITEMS_PER_PAGE,
+                        error_out= False)
+    
+    next_url = prev_url = None
+    
+    if beans.has_next:
+        next_url = url_for('coffee.by_roaster', page=beans.next_num)
+    if beans.has_prev:
+        prev_url = url_for('coffee.by_roaster', page=beans.prev_num)
+    
+    return render_template('coffee_database.html',
+                           title=roaster_name,
+                           beans = beans.items,
+                           next_page=next_url,
+                           prev_page=prev_url)
 
 
 #helper functions
@@ -76,15 +175,15 @@ def get_coffee_id(coffee_attributes: dict) -> str:
         db.session.add(coffee)
         db.session.commit()
     
-    return coffee_id
+    return coffee_id, new_coffee
 
 def update_coffee_table(existing_coffee: Coffee, update_attributes: dict):
-    updated_coffee = { 'roaster' : existing_coffee.roaster,
+    updated_coffee = {'roaster' : existing_coffee.roaster,
                       'bag_name' : existing_coffee.bag_name,
                       'origin' : existing_coffee.origin,
                       'producer' : existing_coffee.producer,
                       'variety' : existing_coffee.variety,
-                      'process' : existing_coffee.process,
+                      'process_method' : existing_coffee.process_method,
                       'blend' : existing_coffee.blend}
     
     for k,v in updated_coffee.items():
@@ -96,7 +195,55 @@ def update_coffee_table(existing_coffee: Coffee, update_attributes: dict):
     existing_coffee.origin = updated_coffee['origin']
     existing_coffee.producer = updated_coffee['producer']
     existing_coffee.variety = updated_coffee['variety']
-    existing_coffee.process = updated_coffee['process']
+    existing_coffee.process_method = updated_coffee['process_method']
     existing_coffee.blend = updated_coffee['blend']
 
     db.session.commit()
+
+
+def create_flavor_profile(flavor_str: str, coffee_id: str, acidity: str):
+    ''' Takes in arguments, creates flavor profile for user's portfolio'''
+    print('flavor_str: ', flavor_str)
+    
+    # break string into words
+    flavor_list=[]
+    delimiters = re.compile('[;,.?!\/|]')
+    delimeter_re = delimiters.finditer(flavor_str)
+
+    first=0
+    for i in delimeter_re:
+        flavor_list.append(flavor_str[first:i.start()].strip(' '))
+        first = i.start()+1
+
+    if first < len(flavor_str):
+        flavor_list.append(flavor_str[first:].strip(' '))
+
+    print('flavor_list: ', flavor_list)
+    for flavor in flavor_list:
+        flavor_id = get_flavor_id(flavor)
+        flavor_profile = FlavorProfile(coffee_id, flavor_id, acidity)
+        db.session.add(flavor_profile)
+    db.session.commit()
+
+def get_flavor_id(flavor: str) -> str:
+    ''' Checks table Flavor for existing descriptors
+        calls add_flavor if no entry matches
+        returns flavor descriptor ID
+    '''
+    existing_flavor = Flavor.query.filter_by(adjective=flavor).first()
+    print('existing_flavor: ', existing_flavor)
+    print('flavor: ', flavor)
+    if existing_flavor == None:
+        return add_flavor(flavor)
+    
+    else:
+        return existing_flavor.flavor_id
+
+def add_flavor(flavor: str) -> str:
+        ''' creates a new entry in table Flavor, returns id'''
+        new_flavor = Flavor(flavor)
+        db.session.add(new_flavor)
+        db.session.commit()
+        print(new_flavor.id, new_flavor.adjective)
+        return new_flavor.id
+

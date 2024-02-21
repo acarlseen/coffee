@@ -8,11 +8,13 @@
 
 {% block content%}
 <div class="form-container">
+  <h1 class="page-title">Add beans to your portfolio</h1>
     <form action="{{ url_for('coffee.add_coffee') }}" method="POST">
       {{ form.hidden_tag() }}
-      <fieldset class="form-field">
+
+      <fieldset class="form-field top top-left">
         {{ form.roaster.label }} <span class="required">*required</span><br>
-        {{ form.roaster }} 
+        {{ form.roaster(class_="input-field") }} 
         {% if form.roaster.errors %}
         <ul class="error">
           {% for error in form.roaster.errors %}
@@ -22,9 +24,9 @@
         {% endif %}
       </fieldset>
 
-      <fieldset class="form-field">
+      <fieldset class="form-field top-right">
         {{ form.bag_name.label }} <br>
-        {{ form.bag_name }} 
+        {{ form.bag_name(class_="input-field") }} 
         {% if form.bag_name.errors %}
         <ul class="error">
           {% for error in form.bag_name.errors %}
@@ -36,7 +38,7 @@
 
       <fieldset class="form-field">
         {{ form.origin.label }} <span class="required">*required</span><br>
-        {{ form.origin }}
+        {{ form.origin(class_="input-field") }}
         {% if form.origin.errors %}
         <ul class="error">
             {% for error in form.origin.errors %}
@@ -48,7 +50,7 @@
 
       <fieldset class="form-field">
         {{ form.producer.label }} <br>
-        {{ form.producer }}
+        {{ form.producer(class_="input-field") }}
         {% if form.producer.errors %}
         <ul class="error">
             {% for error in form.producer.errors %}
@@ -60,7 +62,7 @@
 
       <fieldset class="form-field">
         {{ form.variety.label }} <br>
-        {{ form.variety }}
+        {{ form.variety(class_="input-field") }}
         {% if form.variety.errors %}
         <ul class="error">
             {% for error in form.variety.errors %}
@@ -72,7 +74,7 @@
 
       <fieldset class="form-field">
         {{ form.process_method.label }} <br>
-        {{ form.process_method }}
+        {{ form.process_method(class_="input-field") }}
         {% if form.process_method.errors %}
         <ul class="error">
           {% for error in form.process_method.errors %}
@@ -82,9 +84,9 @@
         {% endif %}
       </fieldset>
 
-      <fieldset class="form-field">
+      <fieldset class="form-field" id="radio">
         {{ form.blend.label }}
-        {{ form.blend }}
+        {{ form.blend(class_="radio-field") }}
         {% if form.blend.errors %}
         <ul class="error">
             {% for error in form.blend.errors %}
@@ -93,10 +95,34 @@
         </ul>
         {% endif %}
       </fieldset>
+      
+      <fieldset class="form-field" id="radio">
+        {{ form.acidity.label }}
+        {{ form.acidity(class_="radio-field") }}
+        {% if form.acidity.errors %}
+        <ul class="error">
+          {% for error in form.acidity.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
 
-      <fieldset class="form-field">
+      <fieldset class="form-field ">
+        {{ form.flavors.label }} <br>
+        {{ form.flavors(class_="input-field larger") }}
+        {% if form.flavors.errors %}
+        <ul class="error">
+          {% for error in form.flavors.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </fieldset>
+
+      <fieldset class="form-field ">
         {{ form.tasting_notes.label }} <br>
-        {{ form.tasting_notes }}
+        {{ form.tasting_notes(rows="10", cols="45", class_="text-field") }}
         {% if form.tasting_notes.errors %}
         <ul class="error">
             {% for error in form.tasting_notes.errors %}

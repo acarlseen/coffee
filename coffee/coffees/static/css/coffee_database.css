@@ -1,0 +1,82 @@
+/*{
+    border: 2px solid red;
+}*/
+
+.grid-container{
+    margin-top: 50px;
+    display: grid;
+    gap: 10px;
+
+    @media screen and (min-width: 800px) {
+        grid-template-columns: 1fr 1fr;
+        
+    }
+    @media screen and (min-width: 1200px) {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+}
+
+.grid-container > :nth-child(odd) > .coffee-item{
+    background-color: var(--primary-color);
+}
+.grid-container > :nth-child(even) > .coffee-item{
+    background-color: var(--secondary-color);
+}
+
+.coffee-item{
+    grid-column-start: auto;
+    display: grid;
+    grid-template-areas: "pic info info ";
+    grid-template-columns: repeat(3, 1fr);
+    max-height: 250px;
+
+    align-items: center;
+
+    margin-top: 10px;
+    padding: 10px;
+    width: 30;
+    border-radius: 10px;
+    color: var(--accent-color1);
+}
+
+.coffee-bag-pic{
+    grid-area: pic;
+}
+img{
+    justify-self: center;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    max-height: 220px;
+}
+
+.coffee-info{
+    grid-area: info;
+    float: right;
+    text-decoration: none;
+
+    th{
+        text-align: end;
+        width:50px;
+    }
+    td{
+        width:50px;
+    }
+}
+
+.pages{
+    display: flex;
+    justify-content: space-between;
+}
+
+.page-button{
+    margin-top: 10px;
+    width: 200px;
+    height: 3em;
+    color: var(--primary-color);
+    background-color: var(--accent-color1);
+    font-size: 12pt;
+    border: 5px solid var(--primary-color);
+    border-radius: 20px;
+}

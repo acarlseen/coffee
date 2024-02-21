@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('coffee.static', filename='css/coffee_profile.css') }}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="grid-container">
+    <div class="nav-adjuster"></div>
+    <div class="coffee-bag-pic">
+        <img src="{{url_for('coffee.static', filename='img/bag.jpg') }}" alt="">
+    </div>
+    <div class="roaster-info">
+        <h1 class="coffee-title">{{ coffee.roaster}} {{ coffee.bag_name }}</h1>
+        <p>Steady State, located in Carlsbad, CA blurby blurb type blurb</p>
+    </div>
+    {% include 'coffee_info.html' %}
+    <div class="more-like-this">
+        <h2>More like this:</h2>
+        <div class="roaster">
+            <a href="{{ url_for('coffee.by_roaster', roaster_name=more_from_roaster) }}" class="roaster-offerings"> More from {{ coffee.roaster }}</a>
+        </div>
+        <div class="flavor">
+            Discover by flavor:
+            <ul>
+                <li>Caramel</li>
+                <li>Apple</li>
+                <li>Orange</li>
+            </ul>
+        </div>
+        <div class="acidity">
+            Similar acidity:
+        </div>
+    </div>
+    <div class="user-reviews">
+        {% if tasting_notes %}
+            <div class="tasting-notes">
+                {{ tasting_notes }}
+            </div>
+        {% endif %}
+        {% if flavors %}
+            <div class="flavors">
+                {{ flavors }}
+            </div>
+        {% endif %}
+
+        {% if tasting_notes == None and flavors == None %}
+            <h1>A selection of recent user reviews will go here</h1>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

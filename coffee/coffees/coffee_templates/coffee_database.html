@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('coffee.static', filename='css/coffee_database.css') }}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content%}
+<div class="grid-container">
+    {% if beans %}
+    {% for coffee in beans %}
+    <a href="{{ url_for('coffee.coffee_profile', coffee_id=coffee.id) }}" class="bag-link">
+        <div class="coffee-item">
+            <div class="coffee-bag-pic">
+                <img src="{{url_for('coffee.static', filename='img/bag.jpg') }}" alt="">
+            </div>
+            {% include 'coffee_info.html' %}
+        </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <div class="first-coffee">
+        Adding tasting notes is easy!<br>
+        <a href="{{ url_for('coffee.add_coffee') }}" class="add-link">Add your first coffee, it's easy!</a>
+    </div>
+    {% endif %}
+</div>
+<div class="pages">
+    <div class="prev_page">
+        {% if prev_page %}
+        <a href="{{ prev_page }}"><button class="page-button">Previous page</button></a>
+        {% endif %}
+    </div>
+    <div class="next_page">
+        {% if next_page %}
+        <a href="{{ next_page }}"><button class="page-button">Next page</button></a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

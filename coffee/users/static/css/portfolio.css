@@ -5,3 +5,8 @@
 .grid-container{
     margin-top: 50px;
 }
+
+.coffee-item{
+    border: 1px solid gray;
+    border-radius: 10px;
+}

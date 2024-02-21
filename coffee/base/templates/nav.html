@@ -1,7 +1,10 @@
 {% block nav%}
 <nav class="navbar">
-        <h1><a href="{{ url_for('site.home') }}" class="nav-item">Home</a></h1>
+        <h1><a href="{{ url_for('site.home') }}" class="nav-item">Bean Counter</a></h1>
     <ul class="navlist-container">
+        <li class="navlist">
+            <a href="{{ url_for('coffee.all_coffees') }}" class="nav-item">Explore</a>
+        </li>
         {% if not current_user.is_authenticated %}
             <li class="navlist">
                 <a href="{{ url_for('authorization.signup') }}" class="nav-item">Sign Up</a>

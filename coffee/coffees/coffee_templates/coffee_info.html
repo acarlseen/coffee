@@ -1,0 +1,36 @@
+<!-- a template for displaying this info anywhere
+    coffee object MUST be called 'coffee' when
+    passed via render_template -->
+
+{% block content%}
+<table class="coffee-info">
+    <tr>
+        <th>Roaster: </th>
+        <td>{{ coffee.roaster }}</td>
+    </tr>
+    <tr>
+        <th>Bag Title: </th>
+        <td>{{ coffee.bag_name }}</td>
+    </tr>
+    <tr>
+        <th>Origin: </th>
+        <td>{{ coffee.origin }}</td>
+    </tr>
+    <tr>
+        <th>Producer: </th>
+        <td>{{ coffee.producer }}</td>
+    </tr>
+    <tr>
+        <th>Variety: </th>
+        <td>{{ coffee.variety }}</td>
+    </tr>
+    <tr>
+        <th>Process: </th>
+        <td>{{ coffee.process_method }}</td>
+    </tr>
+    <tr>
+        <th>Blend/Single: </th>
+        <td>{{ coffee.blend }}</td>
+    </tr>
+</table> 
+{% endblock %}

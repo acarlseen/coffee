@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+:root{
+    --nav-color : #873512; /*135 53 18;*/
+    --primary-color : #873512f3;
+    --secondary-color: #b7641bf3 ;
+    --accent-color1: #fcf2de;
+    --accent-color2: #51a56c;
+
+    --font-body: Josefin Sans;
+    --font-emphasis: Protest Strike;
+    --font-fancy: Lobster;
+    --font-ticker: Sixtyfour;
+    --font-handwritten: Permanent Marker;
+}
+
+*{
+    /*border: 3px solid red;*/
+    font-family: var(--font-body);
+}
+
+body{
+    background-image: url('../img/trap-tile.jpg');
+    background-attachment: fixed;
+    background-size: 100vw;
+    background-repeat: repeat-y;
+}

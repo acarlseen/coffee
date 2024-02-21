@@ -8,12 +8,14 @@
 
 {% block content %}
 <div class="grid-container">
-    {% if coffees %}
-        <ul class="coffee-list">
-            {% for coffee in coffees %}
-            <li class="coffee-item">{{ coffee.coffee }}</li>
+    {% if coffee_list %}
+        <div class="coffee-list">
+            {% for coffee in coffee_list %}
+                <div class="coffee-item">
+                    {% include 'coffee_info.html' %}
+                </div>
             {% endfor %}
-        </ul>
+        </div>
 
     {% else %}
         <div class="first-coffee">
