@@ -26,12 +26,15 @@ def create_app():
         from .auth.auth import auth
         from .users.user_routes import profile
         from .coffees.coffee_routes import coffee
+        from.api.api import api
+
 
         # Register blueprints
         app.register_blueprint(site)
         app.register_blueprint(auth)
         app.register_blueprint(profile)
         app.register_blueprint(coffee)
+        app.register_blueprint(api)
     
         # create database models
         db.create_all()
