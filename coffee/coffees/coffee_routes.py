@@ -105,20 +105,35 @@ def coffee_profile(coffee_id):
     '''
         Displays a single coffee's page
     '''
+    notes = flavors = None
     coffee = Coffee.query.filter_by(id=coffee_id).first()
 
     if current_user.is_authenticated:
         user_id = current_user.get_id()
-        print('user_id: ', user_id)
         tasting_notes = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
+        
         if tasting_notes:
-            flavors = tasting_notes.flavors.capitalize()
-            tasting_notes = tasting_notes.tasting_notes
+            if tasting_notes.flavors:
+                flavors = tasting_notes.flavors.capitalize()
+            if tasting_notes.tasting_notes:
+                notes = tasting_notes.tasting_notes
+
+    flavor_profile = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).all()
+    
+    if flavor_profile != None:
+        print('flavor_profile: ', flavor_profile)
+        for item in flavor_profile:
+            print(vars(item))
+            for thing in item.adjective_id:
+                print(thing)
+            
+
         print(tasting_notes)
+        print('Flavors: ', flavors)
     return render_template('coffee_profile.html',
                            title=coffee.roaster +' '+coffee.bag_name,
                            coffee=coffee,
-                           tasting_notes=tasting_notes,
+                           tasting_notes=notes,
                            flavors=flavors,
                            more_from_roaster=coffee.roaster)
 
@@ -145,6 +160,39 @@ def by_roaster(roaster_name):
                            next_page=next_url,
                            prev_page=prev_url)
 
+
+
+@coffee.route('/coffee/by_flavor/<flavor>', methods=['GET'])
+def by_flavor(flavor):
+    flavor_id = Flavor.query.filter_by(adjective=flavor).first()
+    print('flavor_id: ', flavor_id)
+    if flavor_id != None:
+        flavor_id = flavor_id.id
+        flavor_profile = FlavorProfile.query.filter_by(adjective_id=flavor_id).all()
+
+        coffee_id_list = [entry.coffee_id for entry in flavor_profile]
+
+        coffees_with_flavor = Coffee.query.filter(Coffee.id.in_(coffee_id_list)).all()
+
+        page = request.args.get('page', 1, type=int)
+        beans = Coffee.query.filter(Coffee.id.in_(coffee_id_list)).paginate( 
+                            page=page, 
+                            per_page = Config.ITEMS_PER_PAGE,
+                            error_out= False)
+        
+        next_url = prev_url = None
+        
+        if beans.has_next:
+            next_url = url_for('coffee.by_roaster', page=beans.next_num)
+        if beans.has_prev:
+            prev_url = url_for('coffee.by_roaster', page=beans.prev_num)
+
+        return render_template('coffee_database.html',
+                        title='Coffees by flavor',
+                        beans = beans.items)
+
+    else:
+        return redirect(url_for('site.home'))
 
 #helper functions
 def get_coffee_id(coffee_attributes: dict) -> str:

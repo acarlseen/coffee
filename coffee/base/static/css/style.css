@@ -5,17 +5,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 
 :root{
-    --nav-color : #873512; /*135 53 18;*/
+    /* color scheme possibilities 
+    rules: primary darker than secondary*/
+    /*
+    --nav-color : #873512;
+    --primary-color : #8c491d;
+    --secondary-color: #cc944d ;
+    --accent-color1: #586f56;
+    --accent-color2: #bd8587; /**/
+/*
+    --nav-color : #cc944d;
+    --primary-color : #586f56;
+    --secondary-color: #bd8587 ;
+    --accent-color1: #8c491d;
+    --accent-color2: #bd8587; /**/
+
+    
+    --nav-color : #873512; 
     --primary-color : #873512f3;
     --secondary-color: #b7641bf3 ;
     --accent-color1: #fcf2de;
-    --accent-color2: #51a56c;
+    --accent-color2: #51a56c; /**/
 
     --font-body: Josefin Sans;
     --font-emphasis: Protest Strike;
     --font-fancy: Lobster;
     --font-ticker: Sixtyfour;
     --font-handwritten: Permanent Marker;
+
+    --form-field-height: 1.5em;
+    --form-field-width: 600px;
 }
 
 *{

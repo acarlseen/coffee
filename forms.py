@@ -8,7 +8,7 @@ class SignUpForm(FlaskForm):
     password = PasswordField('Password', validators= [DataRequired(), 
                                                       Length(min=8, message='Select a stronger password'), 
                                                       EqualTo('confirm', message='Passwords do not match')])
-    confirm = PasswordField('Confirm your password', validators=[DataRequired()])
+    confirm = PasswordField('Confirm password', validators=[DataRequired()])
     submit_button = SubmitField('Register')
 
 class LoginForm(FlaskForm):

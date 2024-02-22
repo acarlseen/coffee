@@ -32,16 +32,13 @@ more div*/
     min-width: 375px;
     border-radius: 10px;
     object-fit: cover;
-
-
-
 }
 
 .signin-alpha{
     grid-area: signin-object;
     width: 100%;
     z-index: -1;
-    /* background-color: #f2e7d135; */
+    background-color: rgba(237, 143, 21, 0.101);
     border-radius: 10px;
 
     margin-top: 10vh;
@@ -49,18 +46,17 @@ more div*/
     width: 30vw;
     min-width: 375px;
     border-radius: 10px;
-
-
 }
 
 .signin-object{
+    background-image: url('../img/beans2.png');
+    background-size: cover;
     display:grid;
     grid-area: signin-object;
     grid-template-areas: 
     "title"
     "signin"
     "signup-link";
-    grid-template-rows: 1fr 3fr 1fr;
     justify-items: center;
     
     margin-top: 10vh;
@@ -68,10 +64,10 @@ more div*/
     width: 30vw;
     min-width: 375px;
     border-radius: 10px;
-    /* box-shadow: 0px 0px 50px 10px #eee9e1 inset, 0px 0px 200px 5px #f2e7d1; */
+
     background-color: #b7641b44;
     color: var(--accent-color1);
-
+    /* box-shadow: 0px 0px 50px 10px #eee9e1 inset, 0px 0px 200px 5px #f2e7d1; */
 
 }
     
@@ -86,9 +82,9 @@ more div*/
     grid-area: signin;
     justify-items: center;
 
-    background-color: var(--secondary-color);
+    background-color: var(--accent-color2);
     padding-top:  20px;
-    height: 190px;
+    height: 245px;
     width: 60%;
     border-radius: 5px;
 
