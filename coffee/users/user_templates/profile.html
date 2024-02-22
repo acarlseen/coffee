@@ -8,7 +8,15 @@
 
 {% block content %}
 <div class="grid-container">
-    <p>User Id: {{user_id}}</p>
-    <p>Token: {{token}}</p>
+
+    <div class="user-container">
+        <div class="user-info">
+            <p>User Id: {{user_id}}</p>
+        </div>
+        <div class="user-info">
+            <p>Token: {{token}}</p>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
