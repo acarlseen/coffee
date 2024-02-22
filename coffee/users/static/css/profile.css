@@ -17,6 +17,8 @@
     background-color: var(--accent-color1);
     border: 10px solid var(--primary-color);
     border-radius: 10px;
+    overflow: hidden;
+
 }
 
 .user-container > :nth-child(odd){
@@ -35,4 +37,6 @@
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    overflow-wrap: anywhere;
+
 }
