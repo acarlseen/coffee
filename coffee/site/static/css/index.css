@@ -76,17 +76,17 @@
     height: 50px;
     width: 95vw;
     .sign-up{
-        background-color: rgba(255, 255, 255, 0.792);
+        background-color: var(--accent-color1);
         border-radius: 30px;
         width: 100%;
         height: 100%;
-        border: 3px solid rgba(218, 116, 174, 0.593);
+        border: 3px solid var(--primary-color);
     }
 }
 
 .button-text{
     font-size: 30px;
-    color: rgba(218, 116, 174, 0.593);
+    color: var(--primary-color);
 }
 
 .join-container{
