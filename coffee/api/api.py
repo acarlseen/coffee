@@ -2,13 +2,13 @@ from flask import Blueprint, json, jsonify, request
 
 from models import db, Portfolio, User, Coffee, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema 
 from helpers import token_required
-from ..coffees.coffee_routes import get_coffee_id, update_coffee_table
+from ..coffees.coffee_routes import get_coffee_id, update_coffee_table, create_flavor_profile
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
 @api.route('/')
-@token_required
-def tester(current_user_token):
+
+def tester():
     return jsonify({"message" : "Successful"})
 
 
@@ -20,22 +20,26 @@ def add_coffee(current_user_token, user_id):
     origin = request.json['origin']
     producer = request.json['producer']
     variety = request.json['variety']
-    process = request.json['process']
+    process_method = request.json['process_method']
     blend = request.json['blend']
+    flavors = request.json['flavors']
     tasting_notes = request.json['tasting_notes']
+    acidity = request.json['acidity']
 
     incoming_coffee = {"roaster" : roaster,
                          "bag_name" : bag_name,
                          "origin" : origin,
                          "producer" : producer,
                          "variety" : variety,
-                         "process" : process,
+                         "process_method" : process_method,
                          "blend" : blend}
     
-    coffee_id = get_coffee_id(incoming_coffee)
+    coffee_id, _ = get_coffee_id(incoming_coffee)
 
-    portfolio_add = Portfolio(user_id, coffee_id, tasting_notes)
+    portfolio_add = Portfolio(user_id, coffee_id, tasting_notes, flavors)
     db.session.add(portfolio_add)
+    db.session.commit()
+    create_flavor_profile(flavors, coffee_id, acidity)
     db.session.commit()
 
     response = portfolio_schema.dump(portfolio_add)
@@ -49,8 +53,17 @@ def get_coffees(current_user_token, user_id):
     '''
         Returns a json object of all coffees in one User's Portfolio
     '''
-    response = Portfolio.query.filter_by(user=user_id).all()
-    return jsonify(response)
+    coffees_in_portfolio = Portfolio.query.filter_by(user=user_id).all()
+    print(coffees_in_portfolio)
+    coffee_list = []
+    for coffee in coffees_in_portfolio:
+        beans = Coffee.query.filter_by(id = coffee.coffee).first()
+        coffee_list.append(coffee_schema.dump(beans))
+    portfolio_list = portfolios_schema.dump(coffees_in_portfolio)
+
+    for i, v in enumerate(coffee_list):
+        v.update(portfolio_list[i])
+    return jsonify(coffee_list)
 
 @api.route('/<user_id>/<coffee_id>', methods=["GET"])
 @token_required
@@ -119,5 +132,9 @@ def delete_coffee(current_user_token, user_id, coffee_id):
     response = coffee_schema.dump(del_coffee)
     return jsonify(response)
 
-
-
+@api.route('/coffee/<coffee_id>', methods=['GET'])
+@token_required
+def get_coffee_profile(current_user_token, coffee_id: str):
+    coffee = Coffee.query.filter_by(id=coffee_id).first()
+    response = coffee_schema.dump(coffee)
+    return jsonify(response)

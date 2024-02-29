@@ -104,7 +104,7 @@ class Coffee(db.Model):
 
 class CoffeeSchema(ma.Schema):
     class Meta:
-        fields = ('roaster', 'bag_name', 'origin', 'producer', 'variety', 'process', 'blend')
+        fields = ('roaster', 'bag_name', 'origin', 'producer', 'variety', 'process_method', 'blend')
 
 coffee_schema = CoffeeSchema()
 coffees_schema = CoffeeSchema(many=True)
@@ -156,7 +156,7 @@ class Portfolio(db.Model):
 
 class PortfolioSchema(ma.Schema):
     class Meta:
-        fields = ('tasting_notes', 'timestamp')
+        fields = ('flavors', 'tasting_notes', 'timestamp')
 
 portfolio_schema = PortfolioSchema()
 portfolios_schema = PortfolioSchema(many=True)

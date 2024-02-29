@@ -24,11 +24,15 @@
         </div>
         <div class="flavor">
             Discover by flavor:
+            {% if more_by_flavor != None%}
             <ul>
-                <li>Caramel</li>
-                <li>Apple</li>
-                <li>Orange</li>
+                {% for flavor in more_by_flavor %}
+                <li class="by-flavor-link">
+                    <a href="{{ url_for('coffee.by_flavor', flavor=flavor[1]) }}">{{ flavor[1] }}</a>
+                </li>
+                {% endfor %}
             </ul>
+            {% endif %}
         </div>
         <div class="acidity">
             Similar acidity:

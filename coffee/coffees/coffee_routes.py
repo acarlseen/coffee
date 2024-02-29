@@ -118,24 +118,22 @@ def coffee_profile(coffee_id):
             if tasting_notes.tasting_notes:
                 notes = tasting_notes.tasting_notes
 
-    flavor_profile = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).all()
-    
+    flavor_profile = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).add_columns(Flavor.adjective).all()
+    tester = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).add_entity(Flavor).all()
     if flavor_profile != None:
         print('flavor_profile: ', flavor_profile)
-        for item in flavor_profile:
-            print(vars(item))
-            for thing in item.adjective_id:
-                print(thing)
-            
-
+        print('tester: ', tester)
         print(tasting_notes)
         print('Flavors: ', flavors)
+
+
     return render_template('coffee_profile.html',
                            title=coffee.roaster +' '+coffee.bag_name,
                            coffee=coffee,
                            tasting_notes=notes,
                            flavors=flavors,
-                           more_from_roaster=coffee.roaster)
+                           more_from_roaster=coffee.roaster,
+                           more_by_flavor = flavor_profile)
 
 
 @coffee.route('/coffee/roaster/<roaster_name>', methods=['GET'])
@@ -166,6 +164,9 @@ def by_roaster(roaster_name):
 def by_flavor(flavor):
     flavor_id = Flavor.query.filter_by(adjective=flavor).first()
     print('flavor_id: ', flavor_id)
+    # the following query needs a group_by(coffee.id) statement
+    # becasue there will be many of the same adjective pointing at
+    # each coffee with this ORM design
     if flavor_id != None:
         flavor_id = flavor_id.id
         flavor_profile = FlavorProfile.query.filter_by(adjective_id=flavor_id).all()
@@ -189,7 +190,9 @@ def by_flavor(flavor):
 
         return render_template('coffee_database.html',
                         title='Coffees by flavor',
-                        beans = beans.items)
+                        beans = beans.items,
+                        next_page=next_url,
+                        prev_page=prev_url)
 
     else:
         return redirect(url_for('site.home'))
@@ -249,7 +252,7 @@ def update_coffee_table(existing_coffee: Coffee, update_attributes: dict):
     db.session.commit()
 
 
-def create_flavor_profile(flavor_str: str, coffee_id: str, acidity: str):
+def create_flavor_profile(flavor_str: str, coffee_id: str, acidity: str =''):
     ''' Takes in arguments, creates flavor profile for user's portfolio'''
     print('flavor_str: ', flavor_str)
     
@@ -285,7 +288,7 @@ def get_flavor_id(flavor: str) -> str:
         return add_flavor(flavor)
     
     else:
-        return existing_flavor.flavor_id
+        return existing_flavor.id
 
 def add_flavor(flavor: str) -> str:
         ''' creates a new entry in table Flavor, returns id'''
