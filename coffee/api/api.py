@@ -140,7 +140,7 @@ def update_coffee(current_user_token, user_id, coffee_id):
         # correct bag does not exist
         else:
             new_coffee_id = create_new_coffee(update_attributes)
-            
+
         db.session.delete(existing_portfolio_entry)
         corrected_portfolio = Portfolio(user_id, update_bag.id, tasting_notes, flavors)
         db.session.add(corrected_portfolio)
@@ -149,7 +149,7 @@ def update_coffee(current_user_token, user_id, coffee_id):
     
 
 
-
+        '''
     ##### old code, some snippets might be useful
         
         
@@ -188,7 +188,7 @@ def update_coffee(current_user_token, user_id, coffee_id):
     response1 = coffee_schema.dump(coffee)
     response2 = portfolio_schema(portfolio)
     
-    return jsonify(response1), jsonify(response2)
+    return jsonify(response1), jsonify(response2)'''
 
 @api.route('/<user_id>/<coffee_id>', methods=['DELETE'])
 @token_required
