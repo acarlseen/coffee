@@ -32,3 +32,10 @@ class JSONEncoder(json.JSONEncoder):
         if isinstance(obj, decimal.Decimal):
             return str(obj)
         return super(JSONEncoder, self).default(obj)
+    
+def update_dict(existing_dict: dict, update_dict: dict):
+    for k, v in existing_dict.items():
+        if v == None or v == '':
+            continue
+        update_dict[k] = existing_dict[k]
+    return update_dict

@@ -25,7 +25,7 @@
       </fieldset>
 
       <fieldset class="form-field top-right">
-        {{ form.bag_name.label }} <br>
+        {{ form.bag_name.label }} <span class="required">*required</span><br>
         {{ form.bag_name(class_="input-field") }} 
         {% if form.bag_name.errors %}
         <ul class="error">
@@ -37,7 +37,7 @@
       </fieldset>
 
       <fieldset class="form-field">
-        {{ form.origin.label }} <span class="required">*required</span><br>
+        {{ form.origin.label }} <br>
         {{ form.origin(class_="input-field") }}
         {% if form.origin.errors %}
         <ul class="error">

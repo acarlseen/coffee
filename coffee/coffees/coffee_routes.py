@@ -30,8 +30,12 @@ def add_coffee():
             attributes['producer'] = form.producer.data
             if form.variety.data:
                 attributes['variety'] = str(form.variety.data).lower()
+            else:
+                attributes['variety'] = None
             if form.process_method.data:
                 attributes['process_method'] = str(form.process_method.data).lower()
+            else:
+                attributes['process_method'] = None
             attributes['blend'] = form.blend.data
             
             # get coffee_id, and check if coffee is new or exists in db
@@ -107,7 +111,6 @@ def coffee_profile(coffee_id):
     '''
     notes = flavors = None
     coffee = Coffee.query.filter_by(id=coffee_id).first()
-
     if current_user.is_authenticated:
         user_id = current_user.get_id()
         tasting_notes = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
@@ -125,7 +128,9 @@ def coffee_profile(coffee_id):
         print('tester: ', tester)
         print(tasting_notes)
         print('Flavors: ', flavors)
-
+    if coffee.producer == '':
+        print("producer: ", type(coffee.producer))
+    print("variety: ", coffee.variety)
 
     return render_template('coffee_profile.html',
                            title=coffee.roaster +' '+coffee.bag_name,
@@ -215,18 +220,35 @@ def get_coffee_id(coffee_attributes: dict) -> str:
                 break
     
     if new_coffee == True:
-        coffee = Coffee(roaster=coffee_attributes['roaster'],
+        coffee_id = create_new_coffee(coffee_attributes)
+    
+    return coffee_id, new_coffee
+
+def create_new_coffee(coffee_attributes: dict) -> str:
+    ''' Creates a new coffee entry and returns the UUID for the new entry'''
+    coffee = Coffee(roaster=coffee_attributes['roaster'],
                                bag_name=coffee_attributes['bag_name'],
                                origin=coffee_attributes['origin'],
                                producer=coffee_attributes['producer'],
                                variety=coffee_attributes['variety'],
                                process_method=coffee_attributes['process_method'],
                                blend=coffee_attributes['blend'])
-        coffee_id = coffee.id
-        db.session.add(coffee)
-        db.session.commit()
-    
-    return coffee_id, new_coffee
+    db.session.add(coffee)
+    db.session.commit()
+    return coffee.id
+
+def coffee_as_dict(coffee):
+    coffee_dict = {
+        'roaster': coffee.roaster,
+        'bag_name': coffee.bag_name,
+        'origin': coffee.origin,
+        'producer': coffee.producer,
+        'variety': coffee.variety,
+        'process_method': coffee.process_method,
+        'blend': coffee.blend
+    }
+    return coffee_dict
+
 
 def update_coffee_table(existing_coffee: Coffee, update_attributes: dict):
     updated_coffee = {'roaster' : existing_coffee.roaster,

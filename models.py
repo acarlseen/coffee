@@ -81,7 +81,7 @@ class Coffee(db.Model):
         self.blend = blend
 
     def set_id(self):
-        return uuid.uuid4()
+        return str(uuid.uuid4())
     
     def matches(self, new_coffee_attributes: dict) -> bool:
         my_attributes = {"roaster" : self.roaster,
@@ -100,6 +100,18 @@ class Coffee(db.Model):
                 same_data = False
                 break
         return same_data
+    
+    def as_dict(self):
+        coffee_dict={
+            'roaster': self.roaster,
+            'bag_name': self.bag_name,
+            'origin': self.origin,
+            'producer': self.producer,
+            'variety': self.variety,
+            'process_method': self.process_method,
+            'blend': self.blend
+        }
+        return coffee_dict
         
 
 class CoffeeSchema(ma.Schema):
@@ -152,7 +164,7 @@ class Portfolio(db.Model):
         return FlavorProfile.query.select(FlavorProfile.adjective_id).filter_by(user_id=self.user, coffee_id=self.coffee).all()
 
     def set_id(self):
-        return uuid.uuid4()
+        return str(uuid.uuid4())
 
 class PortfolioSchema(ma.Schema):
     class Meta:
