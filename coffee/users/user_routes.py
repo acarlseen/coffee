@@ -1,7 +1,9 @@
-from flask import Blueprint, url_for, redirect, render_template
+from flask import Blueprint, url_for, redirect, render_template, request
 from flask_login import login_required
 
 from models import User, Portfolio, Coffee
+from config import Config
+
 
 profile = Blueprint('profile', __name__,
                     template_folder='user_templates',
@@ -20,19 +22,27 @@ def user_profile(user_id):
 @profile.route('/portfolio/<user_id>', methods=['GET'])
 @login_required
 def portfolio(user_id):
-    portfolio= None
-    try:
-        portfolio = Portfolio.query.filter_by(user=user_id).all()
-    except:
-        print(portfolio)
+ 
+    page = request.args.get('page', 1, type=int)
+    beans = Portfolio.query.filter_by(user=user_id)\
+        .join(Coffee, Coffee.id == Portfolio.coffee)\
+            .add_entity(Coffee)\
+            .order_by(Coffee.roaster)\
+            .paginate(page=page,
+                      per_page= Config.ITEMS_PER_PAGE,
+                      error_out= False)
 
-    print('portfolio = ', portfolio)
-    coffee_list = [coffee.coffee for coffee in portfolio]
-    print('coffee_list = ', coffee_list)
-    list_o_beans = Coffee.query.filter(Coffee.id.in_(coffee_list))
-    for coffee in list_o_beans:
-        print(coffee.roaster, coffee.bag_name)
+    next_url = prev_url = None
+    
+    if beans.has_next:
+        next_url = url_for('coffee.all_coffees', page=beans.next_num)
+    if beans.has_prev:
+        prev_url = url_for('coffee.all_coffees', page=beans.prev_num)
+    
+    beans2 = [item[1] for item in beans.items]
+
     return render_template('coffee_database.html',
                            title='User Portfolio',
-                           beans=list_o_beans)
-
+                           beans = beans2,
+                           next_page=next_url,
+                           prev_page=prev_url)
