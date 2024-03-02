@@ -83,6 +83,15 @@ class Coffee(db.Model):
     def set_id(self):
         return str(uuid.uuid4())
     
+    # {"roaster" : str(self.roaster),
+    #     "bag_name" : str(self.bag_name),
+    #     "origin" : str(self.origin),
+    #     "producer" : str(self.producer),
+    #     "variety" : str(self.variety),
+    #     "process_method" : str(self.process_method),
+    #     "blend" : str(self.blend)}
+
+
     def matches(self, new_coffee_attributes: dict) -> bool:
         my_attributes = {"roaster" : self.roaster,
                          "bag_name" : self.bag_name,
@@ -92,9 +101,10 @@ class Coffee(db.Model):
                          "process_method" : self.process_method,
                          "blend" : self.blend}
         
+        print('my_attributes: ', my_attributes)
         same_data = True
         for key,value in my_attributes.items():
-            if value.lower() == new_coffee_attributes[key].lower() or new_coffee_attributes[key] == None or value == None:
+            if not value or not new_coffee_attributes[key] or value.lower() == new_coffee_attributes[key].lower() :
                 continue
             else:
                 same_data = False

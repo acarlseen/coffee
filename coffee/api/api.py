@@ -1,6 +1,6 @@
 from flask import Blueprint, json, jsonify, request
 
-from models import db, Portfolio, User, Coffee, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema 
+from models import db, Portfolio, User, Coffee, FlavorProfile, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema 
 from helpers import token_required
 from ..coffees.coffee_routes import get_coffee_id, update_coffee_table, create_flavor_profile, coffee_as_dict, create_new_coffee
 from helpers import update_dict
@@ -82,8 +82,15 @@ def update_coffee(current_user_token, user_id, coffee_id):
     ''' 
         Update a previous entry in coffee
     '''
+    # before all else, check token agains user_id on record
+    current_user = User.query.filter_by(token=current_user_token).first()
+    if current_user.id != user_id:
+        return jsonify({"error message": "token does not match user id"})
+
+
     # load relevant variables for use
     # load entered attributes into a dictionary
+    final_coffee_id = coffee_id
     update_attributes = {}
     update_attributes['roaster'] = request.json['roaster']
     update_attributes['bag_name'] = request.json['bag_name']
@@ -111,12 +118,12 @@ def update_coffee(current_user_token, user_id, coffee_id):
     
     ###### End necessary loading ######
 
-    
+
     # check if the coffee is only in this portfolio, if so it is safe to alter all attributes.
     affected_portfolios = Portfolio.query.filter_by(coffee=coffee_id).all()
     
     unique_entry = False
-    if len(affected_portfolios==1):
+    if len(affected_portfolios)==1:
         unique_entry=True
 
     # check if user is correcting entering the wrong bag of beans
@@ -131,74 +138,68 @@ def update_coffee(current_user_token, user_id, coffee_id):
         # create an updated dict
         updated_coffee_dict = update_dict(existing_coffee_dict, update_attributes)
 
+
     else:
         ''' user entered wrong bag to db '''
+
         # correct bag exists
         if update_bag:
             correct_bag_dict = coffee_as_dict(update_bag)
             updated_coffee_dict = update_dict(correct_bag_dict, update_attributes)
+            final_coffee_id = existing_portfolio_entry.coffee = update_bag.id
         # correct bag does not exist
         else:
             new_coffee_id = create_new_coffee(update_attributes)
+            coffee_to_update = Coffee.query.filter_by(id=new_coffee_id)
+            final_coffee_id = existing_portfolio_entry.coffee = new_coffee_id
 
-        db.session.delete(existing_portfolio_entry)
-        corrected_portfolio = Portfolio(user_id, update_bag.id, tasting_notes, flavors)
-        db.session.add(corrected_portfolio)
+    coffee_to_update.roaster = updated_coffee_dict['roaster']
+    coffee_to_update.bag_name = updated_coffee_dict['bag_name']
+    coffee_to_update.origin = updated_coffee_dict['origin']
+    coffee_to_update.producer = updated_coffee_dict['producer']
+    coffee_to_update.variety = updated_coffee_dict['variety']
+    coffee_to_update.process_method = updated_coffee_dict['process_method']
+    coffee_to_update.blend = updated_coffee_dict['blend']
 
+    if update_tasting_notes:
+        existing_portfolio_entry.tasting_notes = update_tasting_notes
+    if update_flavors and update_flavors.lower() != existing_portfolio_entry.flavors.lower():
+        existing_portfolio_entry.flavors = update_flavors
+        create_flavor_profile(update_flavors, final_coffee_id)
 
-    
-
-
-        '''
-    ##### old code, some snippets might be useful
-        
-        
-        db.session.delete(affected_portfolios[0])
-        coffee_to_delete = Coffee.query.filter_by(id=affected_portfolios[0].coffee).first()
-        db.session.delete(coffee_to_delete)
-
-    else:
-        db.session.delete(existing_portfolio_entry)
-
-
-    fetched_coffee_id = get_coffee_id(update_attributes)
-
-    # case: bag update, user added wrong bag to portfolio
-    # get correct bag, then evaluate tasting note updates and apply
-    if fetched_coffee_id != coffee_id:
-        coffee = Coffee.query.filter_by(id=fetched_coffee_id).first()
-        if update_tasting_notes == None:
-            portfolio_add = Portfolio(user_id, fetched_coffee_id, existing_portfolio_entry.tasting_notes)
-        else:
-            portfolio_add = Portfolio(user_id, fetched_coffee_id, update_tasting_notes)
-        db.session.delete(existing_portfolio_entry)
-        db.session.add(portfolio_add)
-        portfolio = portfolio_add
-    
-    # case: correct bag, updating bag info and/or tasting notes
-    else:
-        portfolio = existing_portfolio_entry
-        coffee = Coffee.query.filter_by(id=coffee_id)
-        update_coffee_table(coffee, update_attributes)
-        if update_tasting_notes != None:
-            existing_portfolio_entry.tasting_notes = update_tasting_notes
-    
     db.session.commit()
-
-    response1 = coffee_schema.dump(coffee)
-    response2 = portfolio_schema(portfolio)
     
-    return jsonify(response1), jsonify(response2)'''
+
+    updated = Coffee.query.filter_by(id=final_coffee_id).first()
+    response = coffee_schema.dump(updated)
+    response.update(portfolio_schema.dump(existing_portfolio_entry))
+    return jsonify(response)
+
 
 @api.route('/<user_id>/<coffee_id>', methods=['DELETE'])
 @token_required
 def delete_coffee(current_user_token, user_id, coffee_id):
     '''deletes a coffee from a user's portfolio'''
+
+    current_user_id = User.query.filter_by(token=current_user_token).first().id
+    if current_user_id != user_id:
+        return jsonify({"error message": "token does not match user id"})
+
     del_coffee = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
+    del_coffee_bag = Coffee.query.filter_by(id=coffee_id).first()
+    
     db.session.delete(del_coffee)
     db.session.commit()
 
-    response = coffee_schema.dump(del_coffee)
+    more_entries = Portfolio.query.filter_by(coffee=coffee_id).first()
+    
+    if not more_entries:
+        FlavorProfile.query.filter_by(coffee_id=coffee_id).delete()
+        db.session.delete(del_coffee_bag)
+        db.session.commit()
+
+    response = portfolio_schema.dump(del_coffee)
+    response.update(coffee_schema.dump(del_coffee_bag))
     return jsonify(response)
 
 @api.route('/coffee/<coffee_id>', methods=['GET'])

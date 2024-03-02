@@ -14,7 +14,7 @@
     </div>
     <div class="roaster-info">
         <h1 class="coffee-title">{{ coffee.roaster}} {{ coffee.bag_name }}</h1>
-        <p>Steady State, located in Carlsbad, CA blurby blurb type blurb</p>
+        <p>A blurb about the roaster belongs here</p>
     </div>
     {% include 'coffee_info.html' %}
     <div class="more-like-this">
@@ -39,14 +39,16 @@
         </div>
     </div>
     <div class="user-reviews">
-        {% if tasting_notes %}
-            <div class="tasting-notes">
-                {{ tasting_notes }}
-            </div>
-        {% endif %}
         {% if flavors %}
             <div class="flavors">
+                <h2>Tastes like:</h2>
                 {{ flavors }}
+            </div>
+        {% endif %}
+        {% if tasting_notes %}
+            <div class="tasting-notes">
+                <h2>My tasting notes:</h2>
+                {{ tasting_notes }}
             </div>
         {% endif %}
 

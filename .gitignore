@@ -2,5 +2,6 @@ venv
 .env
 scratch.py
 __pychache__
+unused_images
 
 to-do.txt

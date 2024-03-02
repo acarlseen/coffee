@@ -37,7 +37,6 @@ def add_coffee():
             else:
                 attributes['process_method'] = None
             attributes['blend'] = form.blend.data
-            
             # get coffee_id, and check if coffee is new or exists in db
             new_coffee_id, coffee_is_new = get_coffee_id(attributes)
             print("new_coffee_id: ", new_coffee_id)
@@ -204,13 +203,18 @@ def by_flavor(flavor):
 
 #helper functions
 def get_coffee_id(coffee_attributes: dict) -> str:
+    ''' Function takes a dictionary of attributes and determines if the record
+    already exists, creating a new record if necessary. Returns coffee UUID and 
+    bool is_new value.
+    coffee id: UUID str
+    is_new : True = new entry; False = existing'''
     new_coffee = True
 
     coffee_list = Coffee.query.filter_by(roaster=coffee_attributes['roaster'], 
-                                         origin=coffee_attributes['origin']).all()
-    print("coffee_list=", coffee_list)
+                                         bag_name=coffee_attributes['bag_name']).all()
     if coffee_list:
         for coffee_obj in coffee_list:
+
             print("coffee_obj= ", coffee_obj)
             if coffee_obj.matches(coffee_attributes):
                 new_coffee= False
@@ -238,6 +242,9 @@ def create_new_coffee(coffee_attributes: dict) -> str:
     return coffee.id
 
 def coffee_as_dict(coffee):
+    ''' Expects an SQLAlchemy or Coffee object, returns a dictionary with relevant fields for comparison 
+    excludes UUID because it is not used in context of this function'''
+    
     coffee_dict = {
         'roaster': coffee.roaster,
         'bag_name': coffee.bag_name,
