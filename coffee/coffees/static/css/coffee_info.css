@@ -1,0 +1,23 @@
+.coffee-info{
+    border-radius: 10px;
+    background-color: var(--secondary-color);
+    padding: 10px;
+ 
+    @media screen and (min-width: 900px) {
+        grid-area: data;
+    }
+}
+
+tr{
+    height: 1.25em;
+}
+
+th{
+    text-align: end;
+    padding-right: 5px;
+    border-right: 2px solid var(--accent-color1);
+}
+
+td{
+    padding-left: 5px;
+}
