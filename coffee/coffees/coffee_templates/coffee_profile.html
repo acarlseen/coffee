@@ -57,5 +57,14 @@
         {% endif %}
     </div>
 </div>
+{% if entry_id %}
+<div class="delete-container">
+    <a href="{{ url_for('coffee.delete_coffee', entry_id = entry_id) }}">
+        <button class="delete-button">
+            Delete Coffee
+        </button>
+    </a>
+</div>
+{% endif %}
 
 {% endblock %}

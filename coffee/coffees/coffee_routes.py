@@ -108,24 +108,25 @@ def coffee_profile(coffee_id):
     '''
         Displays a single coffee's page
     '''
-    notes = flavors = None
+    entry_id = notes = flavors = None
     coffee = Coffee.query.filter_by(id=coffee_id).first()
     if current_user.is_authenticated:
         user_id = current_user.get_id()
-        tasting_notes = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
+        portfolio_entry = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
         
-        if tasting_notes:
-            if tasting_notes.flavors:
-                flavors = tasting_notes.flavors.capitalize()
-            if tasting_notes.tasting_notes:
-                notes = tasting_notes.tasting_notes
+        if portfolio_entry:
+            entry_id = portfolio_entry.id
+            if portfolio_entry.flavors:
+                flavors = portfolio_entry.flavors.capitalize()
+            if portfolio_entry.tasting_notes:
+                notes = portfolio_entry.tasting_notes
 
     flavor_profile = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).add_columns(Flavor.adjective).all()
     tester = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).add_entity(Flavor).all()
     if flavor_profile != None:
         print('flavor_profile: ', flavor_profile)
         print('tester: ', tester)
-        print(tasting_notes)
+        print(portfolio_entry)
         print('Flavors: ', flavors)
     if coffee.producer == '':
         print("producer: ", type(coffee.producer))
@@ -137,8 +138,30 @@ def coffee_profile(coffee_id):
                            tasting_notes=notes,
                            flavors=flavors,
                            more_from_roaster=coffee.roaster,
-                           more_by_flavor = flavor_profile)
+                           more_by_flavor = flavor_profile,
+                           entry_id = entry_id)
 
+
+@coffee.route('/delete/<entry_id>')
+@login_required
+def delete_coffee(entry_id: str):
+    if current_user.is_authenticated:
+        user_id = current_user.get_id()
+        '''deletes a coffee from a user's portfolio'''
+        del_coffee = Portfolio.query.filter_by(id=entry_id).first()
+        del_coffee_bag = Coffee.query.filter_by(id=del_coffee.coffee).first()
+        
+        db.session.delete(del_coffee)
+        db.session.commit()
+
+        more_entries = Portfolio.query.filter_by(coffee=del_coffee.coffee).first()
+        
+        if not more_entries:
+            FlavorProfile.query.filter_by(coffee_id=del_coffee.coffee).delete()
+            db.session.delete(del_coffee_bag)
+            db.session.commit()
+    
+    return redirect(url_for('profile.portfolio', user_id=user_id))
 
 @coffee.route('/coffee/roaster/<roaster_name>', methods=['GET'])
 def by_roaster(roaster_name):

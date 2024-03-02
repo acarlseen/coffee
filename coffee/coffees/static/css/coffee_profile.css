@@ -122,3 +122,18 @@
 .tasting-notes{
     grid-area: tasting-notes;
 }
+
+.delete-container{
+    display: flex;
+    justify-content: end;
+}
+
+.delete-button{
+    background-color: var(--secondary-color);
+
+    height: 3em;
+    font-size: 12pt;
+    border: none;
+    border-radius: 10px;
+    margin-top: 20px;
+}
