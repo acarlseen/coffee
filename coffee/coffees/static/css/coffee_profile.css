@@ -116,6 +116,7 @@
 .flavors{
     grid-area: flavors;
     border-right: 3px solid var(--accent-color1);
+    padding-right: 10px;
 }
 
 .tasting-notes{
