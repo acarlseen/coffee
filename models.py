@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     id : Mapped[str] = mapped_column('id', String, primary_key=True)
     first_name : Mapped[str] = mapped_column('first_name', String, nullable=True, default='')
     last_name : Mapped[str] = mapped_column('last_name', String, nullable=True, default='')
-    email : Mapped[str] = mapped_column('email', String, nullable=False)
+    email : Mapped[str] = mapped_column('email', String, nullable=False, unique=True)
     street1 : Mapped[str] = mapped_column('street', String, nullable=True)
     street2 : Mapped[str] = mapped_column('unit', String, nullable=True)
     city : Mapped[str] = mapped_column('city', String, nullable=True)
