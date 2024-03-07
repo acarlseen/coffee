@@ -123,14 +123,6 @@ def coffee_profile(coffee_id):
 
     flavor_profile = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).add_columns(Flavor.adjective).all()
     tester = FlavorProfile.query.filter_by(coffee_id=coffee_id).join(Flavor, Flavor.id == FlavorProfile.adjective_id).add_entity(Flavor).all()
-    if flavor_profile != None:
-        print('flavor_profile: ', flavor_profile)
-        print('tester: ', tester)
-        print(portfolio_entry)
-        print('Flavors: ', flavors)
-    if coffee.producer == '':
-        print("producer: ", type(coffee.producer))
-    print("variety: ", coffee.variety)
 
     return render_template('coffee_profile.html',
                            title=coffee.roaster +' '+coffee.bag_name,
