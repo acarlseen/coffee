@@ -64,6 +64,7 @@ def get_coffees(current_user_token, user_id):
     portfolio_list = portfolios_schema.dump(coffees_in_portfolio)
 
     for i, v in enumerate(coffee_list):
+        v['coffeeID'] = v['id']
         v.update(portfolio_list[i])
     return jsonify(coffee_list)
 
@@ -72,9 +73,17 @@ def get_coffees(current_user_token, user_id):
 def get_coffee(current_user_token, user_id, coffee_id):
     '''
         Returns a single coffee from a User's Portfolio
+        with tasting
     '''
-    response = Portfolio.query.filter_by(user=user_id, coffee=coffee_id)
-    return jsonify(response)
+    bean_response = Coffee.query.filter_by(id = coffee_id).first()
+    single_coffee = coffee_schema.dump(bean_response)
+    single_coffee.pop('id')
+    single_coffee.update({'coffeeID' : coffee_id})
+    print(single_coffee)
+    response = Portfolio.query.filter_by(user=user_id, coffee=coffee_id).first()
+    single_coffee.update(portfolio_schema.dump(response))
+    print(single_coffee)
+    return jsonify(single_coffee)
 
 @api.route('/<user_id>/<coffee_id>', methods=['POST', 'PUT'])
 @token_required
@@ -101,6 +110,7 @@ def update_coffee(current_user_token, user_id, coffee_id):
     update_attributes['blend'] = request.json['blend']
     update_tasting_notes = request.json['tasting_notes']
     update_flavors = request.json['flavors']
+    update_acidity = request.json['acidity']
 
     # load existing_coffee attributes into a dictionary
     coffee_to_update = Coffee.query.filter_by(id=coffee_id).first()
@@ -166,7 +176,7 @@ def update_coffee(current_user_token, user_id, coffee_id):
     if update_flavors and update_flavors.lower() != existing_portfolio_entry.flavors.lower():
         existing_portfolio_entry.flavors = update_flavors
         create_flavor_profile(update_flavors, final_coffee_id)
-
+    
     db.session.commit()
     
 
@@ -203,8 +213,7 @@ def delete_coffee(current_user_token, user_id, coffee_id):
     return jsonify(response)
 
 @api.route('/coffee/<coffee_id>', methods=['GET'])
-@token_required
-def get_coffee_profile(current_user_token, coffee_id: str):
+def get_coffee_profile( coffee_id: str):
     ''' returns the profile for a single coffee'''
     coffee = Coffee.query.filter_by(id=coffee_id).first()
     response = coffee_schema.dump(coffee)

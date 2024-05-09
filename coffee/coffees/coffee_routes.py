@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import current_user, login_required
 import re
 
+
+
 from config import Config
 from models import Coffee, Portfolio, Flavor, FlavorProfile
 from models import db

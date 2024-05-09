@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_login import UserMixin
-from flask_marshmallow import Marshmallow
+from flask_marshmallow import Marshmallow, fields
 from sqlalchemy import ForeignKey, String, Integer, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 import secrets
@@ -68,7 +68,7 @@ class Coffee(db.Model):
     producer : Mapped[str] = mapped_column('producer', String, nullable=True)
     variety : Mapped[str] = mapped_column('variety', String, nullable=True)
     process_method : Mapped[str] = mapped_column('process_method', String, nullable=True)
-    blend : Mapped[str] = mapped_column('blend', String, nullable=False, default=False)
+    blend : Mapped[str] = mapped_column('blend', String, nullable=False, default='Blend')
 
     def __init__(self, roaster, bag_name='', origin='', producer='', variety='', process_method='', blend=''):
         self.id = self.set_id()
@@ -126,7 +126,7 @@ class Coffee(db.Model):
 
 class CoffeeSchema(ma.Schema):
     class Meta:
-        fields = ('roaster', 'bag_name', 'origin', 'producer', 'variety', 'process_method', 'blend')
+        fields = ('id','roaster', 'bag_name', 'origin', 'producer', 'variety', 'process_method', 'blend')
 
 coffee_schema = CoffeeSchema()
 coffees_schema = CoffeeSchema(many=True)
@@ -154,7 +154,7 @@ class FlavorProfile(db.Model):
 class Portfolio(db.Model):
     id : Mapped[str] = mapped_column('id', String, primary_key=True)
     user : Mapped[str] = mapped_column('user', String, ForeignKey(User.id))
-    coffee : Mapped[str] = mapped_column('coffee', String, ForeignKey(Coffee.id))
+    coffee : Mapped[str] = mapped_column('coffee', String, db.ForeignKey(Coffee.id))
     tasting_notes : Mapped[str] = mapped_column('tasting_notes', String, nullable=True)
     flavors: Mapped[str] = mapped_column('flavors', String, nullable=True)
     rating : Mapped[str] = mapped_column('rating', String, nullable=True)
@@ -178,7 +178,9 @@ class Portfolio(db.Model):
 
 class PortfolioSchema(ma.Schema):
     class Meta:
-        fields = ('flavors', 'tasting_notes', 'timestamp')
+        fields = ('id','flavors', 'tasting_notes', 'timestamp', 'coffee_info')
+    coffee_info = ma.Nested(CoffeeSchema, many=True)
+    include_fk = True
 
 portfolio_schema = PortfolioSchema()
 portfolios_schema = PortfolioSchema(many=True)
