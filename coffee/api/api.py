@@ -1,6 +1,6 @@
 from flask import Blueprint, json, jsonify, request
 
-from models import db, Portfolio, User, Coffee, FlavorProfile, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema 
+from models import db, Portfolio, User, Coffee, FlavorProfile, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema, Flavor
 from helpers import token_required
 from ..coffees.coffee_routes import get_coffee_id, update_coffee_table, create_flavor_profile, coffee_as_dict, create_new_coffee
 from helpers import update_dict
@@ -216,5 +216,21 @@ def delete_coffee(current_user_token, user_id, coffee_id):
 def get_coffee_profile( coffee_id: str):
     ''' returns the profile for a single coffee'''
     coffee = Coffee.query.filter_by(id=coffee_id).first()
+    flavor_list = FlavorProfile.query.filter_by(coffee_id = coffee_id)\
+        .join(Flavor, FlavorProfile.adjective_id == Flavor.id)\
+            .add_entity(Flavor).limit(5).all()
+    
+    compiled_flavors = ''
+    
+    for flavor in flavor_list:
+        print(flavor[1].adjective)
+        compiled_flavors += flavor[1].adjective + ", "
+    
+    compiled_flavors = compiled_flavors[:-2:]
+    print(compiled_flavors)
+    
+    
     response = coffee_schema.dump(coffee)
+    response.update({'flavors': compiled_flavors})
+    print(f'response: {response}')
     return jsonify(response)
