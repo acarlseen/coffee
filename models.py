@@ -153,7 +153,7 @@ class FlavorProfile(db.Model):
 
 class Portfolio(db.Model):
     id : Mapped[str] = mapped_column('id', String, primary_key=True)
-    user : Mapped[str] = mapped_column('user', String, ForeignKey(User.id))
+    user : Mapped[str] = mapped_column('user', String, nullable=False)   # ForeignKey(User.id) <--- used to be an argument
     coffee : Mapped[str] = mapped_column('coffee', String, db.ForeignKey(Coffee.id))
     tasting_notes : Mapped[str] = mapped_column('tasting_notes', String, nullable=True)
     flavors: Mapped[str] = mapped_column('flavors', String, nullable=True)
@@ -179,8 +179,7 @@ class Portfolio(db.Model):
 class PortfolioSchema(ma.Schema):
     class Meta:
         fields = ('id','flavors', 'tasting_notes', 'timestamp', 'coffee_info')
-    coffee_info = ma.Nested(CoffeeSchema, many=True)
-    include_fk = True
+
 
 portfolio_schema = PortfolioSchema()
 portfolios_schema = PortfolioSchema(many=True)

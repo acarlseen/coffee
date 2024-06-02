@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 from config import Config
 
@@ -15,7 +16,9 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False, template_folder='./base/templates', static_folder='./base/static')
     app.config.from_object(Config)
 
+    jwt = JWTManager(app)
     CORS(app)
+    jwt.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)

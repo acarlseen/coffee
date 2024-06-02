@@ -3,6 +3,7 @@ import json
 from functools import wraps
 import decimal
 from flask import jsonify, request
+from flask_jwt_extended import decode_token
 
 from models import User
 
@@ -39,3 +40,15 @@ def update_dict(existing_dict: dict, update_dict: dict):
             continue
         update_dict[k] = existing_dict[k]
     return update_dict
+
+def get_user_id_from_JWT(auth: str):
+    token = auth.split(' ')[1]
+    print(f'INCOMING TOKEN: {token}')
+    decoded_token = decode_token(token)
+    print(decoded_token)
+    user_id = decoded_token['sub'].split('|')
+    if len(user_id) == 1:
+        return user_id[0]
+    return user_id[1]
+
+    

@@ -4,7 +4,8 @@ click==8.1.7
 dnspython==2.5.0
 email-validator==2.1.0.post1
 Flask==3.0.0
-flask-cors
+Flask-Cors==4.0.1
+Flask-JWT-Extended==4.6.0
 Flask-Login==0.6.3
 flask-marshmallow==0.15.0
 Flask-Migrate==4.0.5
@@ -20,6 +21,7 @@ marshmallow==3.20.2
 marshmallow-sqlalchemy==0.30.0
 packaging==23.2
 psycopg2-binary==2.9.9
+PyJWT==2.8.0
 python-dotenv==1.0.0
 SQLAlchemy==2.0.25
 typing_extensions==4.9.0
