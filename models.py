@@ -138,6 +138,12 @@ class Flavor(db.Model):
     def __init__(self, adjective):
         self.adjective = adjective
         self.id
+    
+class FlavorSchema(ma.Schema):
+    class Meta:
+        fields = ('adjective', 'id')
+
+flavors_schema = FlavorSchema(many=True)
 
 
 class FlavorProfile(db.Model):

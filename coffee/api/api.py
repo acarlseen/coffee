@@ -2,7 +2,7 @@ from flask import Blueprint, json, jsonify, request
 from flask_jwt_extended import jwt_required, create_access_token
 from sqlalchemy import text
 
-from models import db, Portfolio, User, Coffee, FlavorProfile, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema, Flavor
+from models import db, Portfolio, User, Coffee, FlavorProfile, user_schema, users_schema, coffee_schema, coffees_schema, portfolios_schema, portfolio_schema, Flavor, flavors_schema
 from helpers import token_required
 from ..coffees.coffee_routes import get_coffee_id, update_coffee_table, create_flavor_profile, coffee_as_dict, create_new_coffee
 from helpers import update_dict, get_user_id_from_JWT
@@ -296,25 +296,48 @@ def filter_results():
     flavor = request.args.get('flavor', '%%', type=str)
     
     # filtered_beans = Coffee.query.filter_by(text(filter_test)).all()
-    filtered_beans = Coffee.query.filter(Coffee.roaster.ilike(roaster), 
-                                         Coffee.bag_name.ilike(bag_name),
-                                         Coffee.origin.ilike(origin),
-                                         Coffee.producer.ilike(producer),
-                                         Coffee.variety.ilike(variety),
-                                         Coffee.process_method.ilike(process_method)).all()
+    # filtered_beans = Coffee.query.filter(Coffee.roaster.ilike(roaster), 
+    #                                      Coffee.bag_name.ilike(bag_name),
+    #                                      Coffee.origin.ilike(origin),
+    #                                      Coffee.producer.ilike(producer),
+    #                                      Coffee.variety.ilike(variety),
+    #                                      Coffee.process_method.ilike(process_method)).all()
     
-    
-    test_filtered_beans = Coffee.query
-    for attr, val in query_filters.items():
-        test_filtered_beans = test_filtered_beans.filter( getattr(Coffee, attr).ilike(val))
-    test_filtered_beans = test_filtered_beans.join(FlavorProfile, Coffee.id == FlavorProfile.coffee_id)\
-        .join(Flavor, FlavorProfile.adjective_id == Flavor.id).filter(Flavor.adjective.ilike(flavor))
 
     
-    filtered = test_filtered_beans.all()
-    result = coffees_schema.dump(filtered)
-    print(result)
-    return jsonify(result)
+    filtered_beans = Coffee.query
+    for attr, val in query_filters.items():
+        filtered_beans = filtered_beans.filter( getattr(Coffee, attr).ilike(val))
+    filtered_beans = filtered_beans.join(FlavorProfile, Coffee.id == FlavorProfile.coffee_id)\
+        .join(Flavor, FlavorProfile.adjective_id == Flavor.id).filter(Flavor.adjective.ilike(flavor))\
+            .order_by(Coffee.roaster, Coffee.bag_name).all()
+        
+    # filtered = filtered_beans.paginate(page= page, per_page=items, error_out=False)
+    
+    filtered_bean_result = coffees_schema.dump(filtered_beans)
+    
+    # Add flavors to result objects
+    filtered_flavors = Flavor.query
+    for bean in filtered_bean_result:
+        temp=set()
+        if flavor != '%%':
+            temp.add(flavor)
+        flavs = filtered_flavors.join(FlavorProfile, Flavor.id == FlavorProfile.adjective_id)\
+            .filter(FlavorProfile.coffee_id.like(bean['id'])).limit(10)
+        for flav in flavs:
+            temp.add(flav.adjective)
+        bean['flavors'] = list(temp)
+        
+    page = request.args.get('page', 1, type=int)
+    items = request.args.get('items', 12, type=int)
+    
+    paginated_results = filtered_bean_result[items*(page-1):items*page:]
+    tot_pages = -(len(filtered_bean_result)//(-items))
+    
+
+    
+    print(paginated_results)
+    return jsonify({'coffees':paginated_results, 'tot_pages': tot_pages})
     
     # response = coffees_schema.dump(filtered_beans)
     # return jsonify(response)
